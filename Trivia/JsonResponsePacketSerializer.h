@@ -1,7 +1,8 @@
 #pragma once
 #include <string>
 #include <vector>
-
+#include "json.hpp"
+using json = nlohmann::json;
 struct LoginResponse {
 	unsigned int status;
 };
