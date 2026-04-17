@@ -2,10 +2,12 @@
 #include <deque>
 #include <queue>
 #include <mutex>
+#include <iostream>
 #include <condition_variable>
 #include <WinSock2.h>
 #include <unordered_map>
 #include "IRequestHandler.h"
+#include "LoginRequestHandler.h"
 
 class Communicator {
 public:

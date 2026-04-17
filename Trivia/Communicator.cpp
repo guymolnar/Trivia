@@ -51,3 +51,20 @@ void Communicator::startHandleRequests()
 		t.detach();
 	}
 }
+
+void Communicator::handleNewClient(SOCKET clientSocket)
+{
+	this->m_clients[clientSocket] = new LoginRequestHandler();
+	std::string msg = "hello";
+	send(clientSocket, msg.c_str(), msg.size(), 0);
+
+	uint8_t buffer[1024] = { 0 };
+	int bytesRecv = 0;
+	while ((bytesRecv = recv(clientSocket, reinterpret_cast<char*>(buffer), sizeof(buffer), 0)) > 0)
+	{
+		std::cout << "Received: " << std::string(buffer, buffer + bytesRecv) << std::endl;
+	}
+	delete m_clients[clientSocket];
+	m_clients.erase(clientSocket);
+	closesocket(clientSocket);
+}
