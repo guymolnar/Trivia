@@ -54,7 +54,11 @@ void Communicator::startHandleRequests()
 
 void Communicator::handleNewClient(SOCKET clientSocket)
 {
-	this->m_clients[clientSocket] = new LoginRequestHandler();
+	{
+		std::lock_guard<std::mutex> lock(m_clientsMutex);
+		m_clients[clientSocket] = new LoginRequestHandler();
+	}
+
 	std::string msg = "hello";
 	send(clientSocket, msg.c_str(), msg.size(), 0);
 
@@ -64,7 +68,11 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	{
 		std::cout << "Received: " << std::string(buffer, buffer + bytesRecv) << std::endl;
 	}
-	delete m_clients[clientSocket];
-	m_clients.erase(clientSocket);
+
+	{
+		std::lock_guard<std::mutex> lock(m_clientsMutex);
+		delete m_clients[clientSocket];
+		m_clients.erase(clientSocket);
+	}
 	closesocket(clientSocket);
 }
