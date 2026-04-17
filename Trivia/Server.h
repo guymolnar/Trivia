@@ -4,6 +4,7 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include "Communicator.h"
 #include <WinSock2.h>
 
 
@@ -15,9 +16,5 @@ public:
 	void run();
 
 private:
-	void bindAndListen();
-	void acceptClient();
-	void clientHandler(const SOCKET client_socket);
-	void safeDeleteUser(const SOCKET id);
-	SOCKET _socket;
+	Communicator m_communicator;
 };
