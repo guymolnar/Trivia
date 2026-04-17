@@ -17,3 +17,16 @@ void Server::run()
 
 	getConsoleInput();
 }
+
+void Server::getConsoleInput()
+{
+    std::string input;
+    while (true)
+    {
+        std::cin >> input;
+        if (input == "EXIT")
+        {
+            break;
+        }
+    }
+}

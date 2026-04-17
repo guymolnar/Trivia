@@ -17,4 +17,5 @@ public:
 
 private:
 	Communicator m_communicator;
+	void getConsoleInput();
 };
