@@ -14,7 +14,7 @@ public:
 	void startHandleRequests();
 private:
 	SOCKET m_serverSocket;
-	std::unordered_map<SOCKET, IRequestHandler> m_clients;
+	std::unordered_map<SOCKET, IRequestHandler*> m_clients;
 
 	void bindAndListen();
 	void handleNewClient(SOCKET clientSocket);

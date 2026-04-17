@@ -10,6 +10,7 @@ Communicator::Communicator()
 	{
 		throw std::exception(__FUNCTION__ " - socket");
 	}
+	bindAndListen();
 }
 
 Communicator::~Communicator()
@@ -34,5 +35,19 @@ void Communicator::bindAndListen()
 	if (::listen(m_serverSocket, SOMAXCONN) == SOCKET_ERROR)
 	{
 		throw std::exception(__FUNCTION__ " - listen");
+	}
+}
+
+void Communicator::startHandleRequests()
+{
+	while (true)
+	{
+		SOCKET clientSocket = ::accept(m_serverSocket, nullptr, nullptr);
+		if (clientSocket == INVALID_SOCKET)
+		{
+			throw std::exception(__FUNCTION__ " - accept");
+		}
+		std::thread t(&Communicator::handleNewClient, this, clientSocket);
+		t.detach();
 	}
 }
