@@ -15,9 +15,9 @@ struct ErrorResponse {
 };
 class JsonResponsePacketSerializer {
 public:
-	std::vector<uint8_t> serializeResponse(LoginResponse);
-	std::vector<uint8_t> serializeResponse(SignupResponse);
-	std::vector<uint8_t> serializeResponse(ErrorResponse);
+	static std::vector<uint8_t> serializeResponse(LoginResponse);
+	static std::vector<uint8_t> serializeResponse(SignupResponse);
+	static std::vector<uint8_t> serializeResponse(ErrorResponse);
 private:
 
 };
