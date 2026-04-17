@@ -1,6 +1,6 @@
 #include "JsonResponsePacketSerializer.h"
 
-std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(LoginResponse)
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const LoginResponse& response)
 {
 	json j = { {"status", 1} };
 	std::string jsonStr = j.dump();
@@ -17,7 +17,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(LoginRespon
 	return packet;
 }
 
-std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(SignupResponse)
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const SignupResponse& response)
 {
 	json j = { {"status", 1} };
 	std::string jsonStr = j.dump();
@@ -34,7 +34,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(SignupRespo
 	return packet;
 }
 
-std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(ErrorResponse)
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const ErrorResponse& response)
 {
 	json j = { {"message", "ERROR"}};
 	std::string jsonStr = j.dump();
