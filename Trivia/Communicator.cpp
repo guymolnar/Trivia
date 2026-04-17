@@ -1,5 +1,8 @@
 #include "Communicator.h"
 
+static const unsigned short PORT = 8826;
+static const unsigned int IFACE = 0;
+
 Communicator::Communicator()
 {
 	this->m_serverSocket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -16,4 +19,20 @@ Communicator::~Communicator()
 		::closesocket(this->m_serverSocket);
 	}
 	catch (...) {}
+}
+
+void Communicator::bindAndListen()
+{
+	struct sockaddr_in sa = { 0 };
+	sa.sin_port = htons(PORT);
+	sa.sin_family = AF_INET;
+	sa.sin_addr.s_addr = IFACE;
+	if (::bind(m_serverSocket, (struct sockaddr*)&sa, sizeof(sa)) == SOCKET_ERROR)
+	{
+		throw std::exception(__FUNCTION__ " - bind");
+	}
+	if (::listen(m_serverSocket, SOMAXCONN) == SOCKET_ERROR)
+	{
+		throw std::exception(__FUNCTION__ " - listen");
+	}
 }
