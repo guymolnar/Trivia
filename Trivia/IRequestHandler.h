@@ -14,6 +14,6 @@ struct RequestResult {
 
 class IRequestHandler {
 public:
-	bool isRequestRelevant(const RequestInfo& requestInfo);
-	RequestResult handleRequest(const RequestInfo& requestInfo);
+	virtual bool isRequestRelevant(const RequestInfo& requestInfo) = 0;
+	virtual RequestResult handleRequest(const RequestInfo& requestInfo) = 0;
 };
