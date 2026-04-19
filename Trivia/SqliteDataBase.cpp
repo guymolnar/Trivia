@@ -45,3 +45,9 @@ int SqliteDataBase::doesPasswordMatch(std::string username, std::string password
         }, &count, nullptr);
     return count;
 }
+
+int SqliteDataBase::addNewUser(std::string username, std::string password, std::string email)
+{
+    std::string query = "INSERT INTO users (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');";
+    return sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, nullptr) == SQLITE_OK;
+}
