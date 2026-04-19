@@ -4,6 +4,8 @@
 
 class RequestHandlerFactory {
 public:
+	RequestHandlerFactory(IDatabase* IDB, LoginManager loginManager);
+	~RequestHandlerFactory() = default;
 	LoginRequestHandler* createLoginRequestHandler();
 	LoginManager& getLoginManager();
 private:
