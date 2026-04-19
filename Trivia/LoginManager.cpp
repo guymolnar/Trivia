@@ -29,5 +29,21 @@ void LoginManager::login(std::string name, std::string password)
     {
         throw std::exception("Wrong password");
     }
-    m_loggedUser.push_back(LoggedUser(name));
+    m_loggedUsers.push_back(LoggedUser(name));
+}
+
+void LoginManager::logout(std::string name)
+{
+    if (!m_database->doesUserExist(name))
+    {
+        throw std::exception("User does not exist");
+    }
+    for (auto it = m_loggedUsers.begin(); it != m_loggedUsers.end(); ++it)
+    {
+        if (it->getUsername() == name)
+        {
+            m_loggedUsers.erase(it);
+            break;
+        }
+    }
 }
