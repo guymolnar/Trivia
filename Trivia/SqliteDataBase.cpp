@@ -23,3 +23,14 @@ bool SqliteDataBase::close()
     }
     return true;
 }
+
+int SqliteDataBase::doesUserExist(std::string username)
+{
+    std::string query = "SELECT COUNT(*) FROM users WHERE username = '" + username + "';";
+    int count = 0;
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        *reinterpret_cast<int*>(data) = std::stoi(argv[0]);
+        return 0;
+        }, &count, nullptr);
+    return count;
+}
