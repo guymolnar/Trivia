@@ -7,9 +7,9 @@ public:
 	LoginManager(IDatabase* IDB);
 	~LoginManager();
 
-	void signup(std::string, std::string, std::string);
-	void login(std::string, std::string);
-	void logout(std::string);
+	void signup(std::string name, std::string password, std::string mail);
+	void login(std::string name, std::string password);
+	void logout(std::string name);
 private:
 	IDatabase* m_database;
 	std::vector<LoggedUser> m_loggedUser;
