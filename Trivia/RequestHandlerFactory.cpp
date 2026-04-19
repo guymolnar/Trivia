@@ -4,3 +4,8 @@ RequestHandlerFactory::RequestHandlerFactory(IDatabase* IDB, LoginManager loginM
 {
 
 }
+
+LoginRequestHandler* RequestHandlerFactory::createLoginRequestHandler()
+{
+	return new LoginRequestHandler(*this);
+}
