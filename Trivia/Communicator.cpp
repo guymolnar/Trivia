@@ -83,7 +83,12 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		requestInfo.receivalTime = time(nullptr);
 		requestInfo.buffer = payload;
 		RequestResult result = m_clients[clientSocket]->handleRequest(requestInfo);
-
+		send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
+		{
+			std::lock_guard<std::mutex> lock(m_clientsMutex);
+			delete m_clients[clientSocket];
+			m_clients[clientSocket] = result.newHandler;
+		}
 	}
 
 	{
