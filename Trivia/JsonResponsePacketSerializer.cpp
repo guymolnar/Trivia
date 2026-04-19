@@ -6,7 +6,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Login
 	std::string jsonStr = j.dump();
 
 	std::vector<uint8_t> packet;
-	packet.push_back(1); // loginResponse code
+	packet.push_back(LOGIN_REQUEST_CODE);
 
 	uint32_t len = htonl(jsonStr.size()); //converting endianess to be the same as the network standard
 	uint8_t * lenBytes = reinterpret_cast<uint8_t*>(&len);
@@ -23,7 +23,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Signu
 	std::string jsonStr = j.dump();
 
 	std::vector<uint8_t> packet;
-	packet.push_back(2); // loginResponse code
+	packet.push_back(SIGNUP_REQUEST_CODE);
 
 	uint32_t len = htonl(jsonStr.size()); //converting endianess to be the same as the network standard
 	uint8_t* lenBytes = reinterpret_cast<uint8_t*>(&len);
@@ -40,7 +40,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Error
 	std::string jsonStr = j.dump();
 
 	std::vector<uint8_t> packet;
-	packet.push_back(3); // loginResponse code
+	packet.push_back(ERROR_REQUEST_CODE);
 
 	uint32_t len = htonl(jsonStr.size()); //converting endianess to be the same as the network standard
 	uint8_t* lenBytes = reinterpret_cast<uint8_t*>(&len);

@@ -3,6 +3,8 @@
 #include <vector>
 #include "json.hpp"
 #include <winsock2.h>
+#include "IRequestHandler.h"
+
 using json = nlohmann::json;
 struct LoginResponse {
 	unsigned int status;
