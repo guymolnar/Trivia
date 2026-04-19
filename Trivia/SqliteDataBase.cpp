@@ -11,7 +11,13 @@ SqliteDataBase::~SqliteDataBase()
 
 bool SqliteDataBase::open()
 {
-    return sqlite3_open("trivia.db", &m_db) == SQLITE_OK;
+    if (sqlite3_open("trivia.db", &m_db) != SQLITE_OK)
+    {
+        return false;
+    }
+    const char* createTable = "CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, email TEXT);";
+    sqlite3_exec(m_db, createTable, nullptr, nullptr, nullptr);
+    return true;
 }
 
 bool SqliteDataBase::close()
