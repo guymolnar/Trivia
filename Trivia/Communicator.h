@@ -18,7 +18,7 @@ private:
 	SOCKET m_serverSocket;
 	std::unordered_map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
-
+	RequestHandlerFactory& m_handlerFactory;
 	void bindAndListen();
 	void handleNewClient(SOCKET clientSocket);
 };
