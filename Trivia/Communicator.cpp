@@ -59,14 +59,31 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		m_clients[clientSocket] = new LoginRequestHandler();
 	}
 
-	std::string msg = "hello";
-	send(clientSocket, msg.c_str(), msg.size(), 0);
+	//std::string msg = "hello";
+	//send(clientSocket, msg.c_str(), msg.size(), 0);
 
-	uint8_t buffer[1024] = { 0 };
-	int bytesRecv = 0;
-	while ((bytesRecv = recv(clientSocket, reinterpret_cast<char*>(buffer), sizeof(buffer), 0)) > 0)
+	uint8_t code = 0;
+	while (recv(clientSocket, reinterpret_cast<char*>(&code), 1, 0) > 0)
 	{
-		std::cout << "Received: " << std::string(buffer, buffer + bytesRecv) << std::endl;
+		uint8_t lenBytes[4] = {0};
+		recv(clientSocket, reinterpret_cast<char*>(lenBytes), 4, 0);
+		uint32_t jsonLen = ntohl(*reinterpret_cast<uint32_t*>(lenBytes));
+		int totalReceived = 0;
+		std::vector<uint8_t> payload(jsonLen);
+		while (totalReceived < (int)jsonLen)
+		{
+			int bytes = recv(clientSocket, reinterpret_cast<char*>(payload.data()) + totalReceived, jsonLen - totalReceived, 0);
+			if (bytes <= 0)
+				break;
+			totalReceived += bytes;
+		}
+
+		RequestInfo requestInfo;
+		requestInfo.id = code;
+		requestInfo.receivalTime = time(nullptr);
+		requestInfo.buffer = payload;
+		RequestResult result = m_clients[clientSocket]->handleRequest(requestInfo);
+
 	}
 
 	{

@@ -4,7 +4,7 @@
 #define LOGIN_REQUEST_CODE 1
 #define SIGNUP_REQUEST_CODE 2
 #define ERROR_REQUEST_CODE 0
-
+class IRequestHandler;
 struct RequestInfo {
 	uint8_t id;
 	time_t receivalTime;

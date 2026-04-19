@@ -7,8 +7,13 @@ bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
 
 RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo)
 {
+	LoginRequest loginRequest = JsonRequestPacketDeserializer::deserializeLoginRequest(requestInfo.buffer);
+
+	LoginResponse loginResponse;
+	loginResponse.status = 1;
+
 	RequestResult requestResult;
-	requestResult.buffer = requestInfo.buffer;
+	requestResult.buffer = JsonResponsePacketSerializer::serializeResponse(loginResponse);
 	requestResult.newHandler = new LoginRequestHandler();
 	return requestResult;
 }
