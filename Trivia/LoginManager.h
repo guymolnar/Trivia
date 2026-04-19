@@ -4,7 +4,7 @@
 #include "LoggedUser.h"
 class LoginManager {
 public:
-	LoginManager(IDatabase*);
+	LoginManager(IDatabase* IDB);
 	~LoginManager();
 
 	void signup(std::string, std::string, std::string);
