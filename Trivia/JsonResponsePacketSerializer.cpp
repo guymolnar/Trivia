@@ -2,7 +2,7 @@
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const LoginResponse& response)
 {
-	json j = { {"status", 1} };
+	json j = { {"status", response.status} };
 	std::string jsonStr = j.dump();
 
 	std::vector<uint8_t> packet;
@@ -19,7 +19,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Login
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const SignupResponse& response)
 {
-	json j = { {"status", 1} };
+	json j = { {"status", response.status} };
 	std::string jsonStr = j.dump();
 
 	std::vector<uint8_t> packet;
