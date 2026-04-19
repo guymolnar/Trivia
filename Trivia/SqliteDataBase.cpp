@@ -34,3 +34,14 @@ int SqliteDataBase::doesUserExist(std::string username)
         }, &count, nullptr);
     return count;
 }
+
+int SqliteDataBase::doesPasswordMatch(std::string username, std::string password)
+{
+    std::string query = "SELECT COUNT(*) FROM users WHERE username = '" + username + "' AND password = '" + password + "';";
+    int count = 0;
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        *reinterpret_cast<int*>(data) = std::stoi(argv[0]);
+        return 0;
+        }, &count, nullptr);
+    return count;
+}
