@@ -36,7 +36,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Signu
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const ErrorResponse& response)
 {
-	json j = { {"message", "ERROR"}};
+	json j = { {"message", response.message}};
 	std::string jsonStr = j.dump();
 
 	std::vector<uint8_t> packet;
