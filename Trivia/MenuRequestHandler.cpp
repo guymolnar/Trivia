@@ -1,4 +1,5 @@
 #include "MenuRequestHandler.h"
+#include "RequestHandlerFactory.h"
 
 MenuRequestHandler::MenuRequestHandler(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory)
 {

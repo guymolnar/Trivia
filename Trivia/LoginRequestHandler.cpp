@@ -1,4 +1,5 @@
 #include "LoginRequestHandler.h"
+#include "RequestHandlerFactory.h"
 
 LoginRequestHandler::LoginRequestHandler(RequestHandlerFactory& factory) : m_handlerFactory(factory) 
 {
