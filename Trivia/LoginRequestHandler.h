@@ -18,4 +18,5 @@ private:
 	RequestResult login(const RequestInfo& requestInfo);
 	RequestResult signup(const RequestInfo& requestInfo);
 	static bool isPasswordValid(const std::string& password);
+	static bool isEmailValid(const std::string& email);
 };

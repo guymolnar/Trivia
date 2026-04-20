@@ -58,7 +58,11 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 		{
 			throw std::exception("Invalid password");
 		}
-		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email);
+		if (!isEmailValid(req.email))
+		{
+			throw std::exception("Invalid email");
+		}
+		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email, req.address, req.phone, req.birthday);
 
 		SignupResponse response;
 		response.status = 1;
@@ -96,4 +100,10 @@ bool LoginRequestHandler::isPasswordValid(const std::string& password)
 		std::regex_search(password, hasLower) &&
 		std::regex_search(password, hasDigit) &&
 		std::regex_search(password, hasSpecial);
+}
+
+bool isEmailValid(const std::string& email)
+{
+	std::regex emailRegex("^[a-zA-Z0-9]+@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+$");
+	return std::regex_match(email, emailRegex);
 }
