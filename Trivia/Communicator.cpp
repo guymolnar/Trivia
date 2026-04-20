@@ -70,7 +70,10 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		}
 		RequestResult result = handler->handleRequest(requestInfo);
 
-		send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
+		if (send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0) == SOCKET_ERROR)
+		{
+			throw std::exception(__FUNCTION__ " - send");
+		}
 
 		{
 			std::lock_guard<std::mutex> lock(m_clientsMutex);
