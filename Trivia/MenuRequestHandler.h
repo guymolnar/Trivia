@@ -1,7 +1,7 @@
 #pragma once
 #include "RequestHandlerFactory.h"
 
-class MenuRequestHandler {
+class MenuRequestHandler : public IRequestHandler{
 public:
 	MenuRequestHandler(RequestHandlerFactory& handlerFactory);
 };
