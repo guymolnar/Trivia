@@ -13,7 +13,12 @@ bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
 
 RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo)
 {
-	
+	if (requestInfo.id == LOGIN_REQUEST_CODE)
+	{
+		return login(requestInfo);
+	}
+		
+	return signup(requestInfo);
 }
 
 RequestResult LoginRequestHandler::login(const RequestInfo& requestInfo)
