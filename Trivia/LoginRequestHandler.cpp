@@ -42,3 +42,30 @@ RequestResult LoginRequestHandler::login(const RequestInfo& requestInfo)
 		return result;
 	}
 }
+
+RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
+{
+	try
+	{
+		SignupRequest req = JsonRequestPacketDeserializer::deserializeSignupRequest(requestInfo.buffer);
+		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email);
+
+		SignupResponse response;
+		response.status = 1;
+
+		RequestResult result;
+		result.buffer = JsonResponsePacketSerializer::serializeResponse(response);
+		result.newHandler = m_handlerFactory.createMenuRequestHandler();
+		return result;
+	}
+	catch (const std::exception&)
+	{
+		SignupResponse response;
+		response.status = 0;
+
+		RequestResult result;
+		result.buffer = JsonResponsePacketSerializer::serializeResponse(response);
+		result.newHandler = m_handlerFactory.createLoginRequestHandler();
+		return result;
+	}
+}
