@@ -21,6 +21,11 @@ void LoginManager::signup(std::string name, std::string password, std::string ma
 
 void LoginManager::login(std::string name, std::string password)
 {
+    for (auto& user : m_loggedUsers)
+    {
+        if (user.getUsername() == name)
+            throw std::exception("User already logged in");
+    }
     if (!m_database->doesUserExist(name))
     {
         throw std::exception("User does not exist");
