@@ -15,7 +15,7 @@ bool SqliteDataBase::open()
     {
         return false;
     }
-    const char* createTable = "CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, email TEXT);";
+    const char* createTable = "CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, email TEXT, address TEXT, phone TEXT, birthday TEXT);";
     sqlite3_exec(m_db, createTable, nullptr, nullptr, nullptr);
     return true;
 }
