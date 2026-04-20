@@ -1,6 +1,6 @@
 #include "Server.h"
 
-Server::Server() : m_communicator()
+Server::Server() : m_database(new SqliteDataBase()), m_handlerFactory(m_database), m_communicator(m_handlerFactory)
 {
 
 }

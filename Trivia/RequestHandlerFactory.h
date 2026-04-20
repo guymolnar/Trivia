@@ -5,7 +5,7 @@
 
 class RequestHandlerFactory {
 public:
-	RequestHandlerFactory(IDatabase* IDB, LoginManager loginManager);
+	RequestHandlerFactory(IDatabase* IDB);
 	~RequestHandlerFactory() = default;
 	LoginRequestHandler* createLoginRequestHandler();
 	MenuRequestHandler* createMenuRequestHandler();

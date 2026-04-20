@@ -7,6 +7,7 @@
 #include "Communicator.h"
 #include <WinSock2.h>
 #include "IDatabase.h"
+#include "SqliteDataBase.h"
 #include "RequestHandlerFactory.h"
 
 
@@ -18,8 +19,8 @@ public:
 	void run();
 	
 private:
-	Communicator m_communicator;
 	IDatabase* m_database;
 	RequestHandlerFactory m_handlerFactory;
+	Communicator m_communicator;
 	void getConsoleInput();
 };

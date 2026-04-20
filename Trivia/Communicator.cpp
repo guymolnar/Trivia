@@ -3,7 +3,7 @@
 static const unsigned short PORT = 8826;
 static const unsigned int IFACE = 0;
 
-Communicator::Communicator()
+Communicator::Communicator(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory)
 {
 	this->m_serverSocket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (this->m_serverSocket == INVALID_SOCKET)
@@ -56,7 +56,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 {
 	{
 		std::lock_guard<std::mutex> lock(m_clientsMutex);
-		m_clients[clientSocket] = new LoginRequestHandler();
+		m_clients[clientSocket] = new LoginRequestHandler(m_handlerFactory);
 	}
 
 	//std::string msg = "hello";

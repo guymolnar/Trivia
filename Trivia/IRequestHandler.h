@@ -13,7 +13,7 @@ struct RequestInfo {
 
 struct RequestResult {
 	std::vector<uint8_t> buffer;
-	IRequestHandler* newHandler;
+	IRequestHandler* newHandler = nullptr;
 };
 
 class IRequestHandler {
