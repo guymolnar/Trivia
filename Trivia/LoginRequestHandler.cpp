@@ -66,6 +66,11 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 		{
 			throw std::exception("Invalid address");
 		}
+		if (!isPhoneValid(req.phone))
+		{
+			throw std::exception("Invalid phone");
+
+		}
 		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email, req.address, req.phone, req.birthday);
 
 		SignupResponse response;
@@ -116,4 +121,10 @@ bool isAddressValid(const std::string& address)
 {
 	std::regex addressRegex("^[a-zA-Z]+, [0-9]+, [a-zA-Z]+$");
 	return std::regex_match(address, addressRegex);
+}
+
+bool isPhoneValid(const std::string& phone)
+{
+	std::regex phoneRegex("^(0[0-9]|0[0-9]{2})-[0-9]+$");
+	return std::regex_match(phone, phoneRegex);
 }
