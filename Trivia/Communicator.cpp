@@ -111,3 +111,30 @@ bool Communicator::recvAll(SOCKET s, char* buffer, int length)
 	}
 	return true;
 }
+
+bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
+{
+	uint8_t code;
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), 1))
+		return false;
+
+	uint8_t lenBytes[4];
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), 4))
+		return false;
+
+	uint32_t jsonLen;
+	memcpy(&jsonLen, lenBytes, 4);
+	jsonLen = ntohl(jsonLen);
+
+	if (jsonLen > 4096)
+		return false;
+
+	std::vector<uint8_t> payload(jsonLen);
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(payload.data()), jsonLen))
+		return false;
+
+	requestInfo.id = code;
+	requestInfo.receivalTime = time(nullptr);
+	requestInfo.buffer = payload;
+	return true;
+}
