@@ -19,10 +19,10 @@ public:
         static Server instance;
         return instance;
     }
-
     Server(const Server&) = delete;
     void operator=(const Server&) = delete;
 	void run();
+
 	
 private:
     Server();
