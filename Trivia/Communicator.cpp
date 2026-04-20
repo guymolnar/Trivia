@@ -17,6 +17,11 @@ Communicator::~Communicator()
 {
 	try
 	{
+		for (auto& pair : m_clients)
+		{
+			delete pair.second;
+		}
+		m_clients.clear();
 		::closesocket(this->m_serverSocket);
 	}
 	catch (...) {}
