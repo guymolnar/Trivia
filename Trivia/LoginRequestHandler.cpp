@@ -13,12 +13,32 @@ bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
 
 RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo)
 {
-	LoginRequest loginRequest = JsonRequestPacketDeserializer::deserializeLoginRequest(requestInfo.buffer);
-	LoginResponse loginResponse;
-	loginResponse.status = requestInfo.id;
+	
+}
 
-	RequestResult requestResult;
-	requestResult.buffer = JsonResponsePacketSerializer::serializeResponse(loginResponse);
-	requestResult.newHandler = new LoginRequestHandler();
-	return requestResult;
+RequestResult LoginRequestHandler::login(const RequestInfo& requestInfo)
+{
+	try
+	{
+		LoginRequest req = JsonRequestPacketDeserializer::deserializeLoginRequest(requestInfo.buffer);
+		m_handlerFactory.getLoginManager().login(req.username, req.password);
+
+		LoginResponse response;
+		response.status = 1;
+
+		RequestResult result;
+		result.buffer = JsonResponsePacketSerializer::serializeResponse(response);
+		result.newHandler = m_handlerFactory.createMenuRequestHandler();
+		return result;
+	}
+	catch (const std::exception&)
+	{
+		LoginResponse response;
+		response.status = 0;
+
+		RequestResult result;
+		result.buffer = JsonResponsePacketSerializer::serializeResponse(response);
+		result.newHandler = m_handlerFactory.createLoginRequestHandler();
+		return result;
+	}
 }
