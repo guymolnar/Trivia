@@ -6,4 +6,6 @@ public:
 	MenuRequestHandler(RequestHandlerFactory& handlerFactory);
 	bool isRequestRelevant(const RequestInfo& requestInfo) override;
 	RequestResult handleRequest(const RequestInfo& requestInfo) override;
+private:
+	RequestHandlerFactory& m_handlerFactory;
 };
