@@ -1,6 +1,6 @@
 #include "Server.h"
 
-Server::Server() : m_database(new SqliteDataBase()), m_handlerFactory(m_database)
+Server::Server() : m_database(&SqliteDataBase::getInstance()), m_handlerFactory(m_database)
 {
     m_database->open();
 }
