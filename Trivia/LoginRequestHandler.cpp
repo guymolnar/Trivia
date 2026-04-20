@@ -8,7 +8,7 @@ LoginRequestHandler::LoginRequestHandler(RequestHandlerFactory& factory) : m_han
 
 bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
 {
-	return (requestInfo.id == LOGIN_REQUEST_CODE);
+	return (requestInfo.id == LOGIN_REQUEST_CODE || requestInfo.id == SIGNUP_REQUEST_CODE);
 }
 
 RequestResult LoginRequestHandler::handleRequest(const RequestInfo& requestInfo)
