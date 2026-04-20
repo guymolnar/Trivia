@@ -62,6 +62,10 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 		{
 			throw std::exception("Invalid email");
 		}
+		if (!isAddressValid(req.address))
+		{
+			throw std::exception("Invalid address");
+		}
 		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email, req.address, req.phone, req.birthday);
 
 		SignupResponse response;
@@ -106,4 +110,10 @@ bool isEmailValid(const std::string& email)
 {
 	std::regex emailRegex("^[a-zA-Z0-9]+@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+$");
 	return std::regex_match(email, emailRegex);
+}
+
+bool isAddressValid(const std::string& address)
+{
+	std::regex addressRegex("^[a-zA-Z]+, [0-9]+, [a-zA-Z]+$");
+	return std::regex_match(address, addressRegex);
 }
