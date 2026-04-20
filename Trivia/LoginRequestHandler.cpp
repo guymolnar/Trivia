@@ -116,25 +116,25 @@ bool LoginRequestHandler::isPasswordValid(const std::string& password)
 		std::regex_search(password, hasSpecial);
 }
 
-bool isEmailValid(const std::string& email)
+bool LoginRequestHandler::isEmailValid(const std::string& email)
 {
 	std::regex emailRegex("^[a-zA-Z0-9]+@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+$");
 	return std::regex_match(email, emailRegex);
 }
 
-bool isAddressValid(const std::string& address)
+bool LoginRequestHandler::isAddressValid(const std::string& address)
 {
 	std::regex addressRegex("^[a-zA-Z]+, [0-9]+, [a-zA-Z]+$");
 	return std::regex_match(address, addressRegex);
 }
 
-bool isPhoneValid(const std::string& phone)
+bool LoginRequestHandler::isPhoneValid(const std::string& phone)
 {
 	std::regex phoneRegex("^(0[0-9]|0[0-9]{2})-[0-9]+$");
 	return std::regex_match(phone, phoneRegex);
 }
 
-bool isBirthdayValid(const std::string& birthday)
+bool LoginRequestHandler::isBirthdayValid(const std::string& birthday)
 {
 	std::regex birthdayRegex("^[0-9]{1,2}[./][0-9]{1,2}[./][0-9]{4}$");
 	return std::regex_match(birthday, birthdayRegex);
