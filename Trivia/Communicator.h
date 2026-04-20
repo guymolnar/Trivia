@@ -21,4 +21,6 @@ private:
 	RequestHandlerFactory& m_handlerFactory;
 	void bindAndListen();
 	void handleNewClient(SOCKET clientSocket);
+	bool readMessage(SOCKET clientSocket, RequestInfo& requestInfo);
+	static bool recvAll(SOCKET s, char* buffer, int length);
 };

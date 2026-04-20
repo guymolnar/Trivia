@@ -98,3 +98,16 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 	}
 	closesocket(clientSocket);
 }
+
+bool Communicator::recvAll(SOCKET s, char* buffer, int length)
+{
+	int total = 0;
+	while (total < length)
+	{
+		int bytes = recv(s, buffer + total, length - total, 0);
+		if (bytes <= 0)
+			return false;
+		total += bytes;
+	}
+	return true;
+}
