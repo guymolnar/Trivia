@@ -52,8 +52,8 @@ int SqliteDataBase::doesPasswordMatch(std::string username, std::string password
     return count;
 }
 
-int SqliteDataBase::addNewUser(std::string username, std::string password, std::string email)
+int SqliteDataBase::addNewUser(std::string username, std::string password, std::string email, std::string address, std::string phone, std::string birthday)
 {
-    std::string query = "INSERT INTO users (username, password, email) VALUES ('" + username + "', '" + password + "', '" + email + "');";
+    std::string query = "INSERT INTO users (username, password, email, address, phone, birthday) VALUES ('" + username + "', '" + password + "', '" + email + "', '" + address + "', '" + phone + "', '" + birthday + "');";
     return sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, nullptr) == SQLITE_OK;
 }

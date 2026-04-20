@@ -12,7 +12,7 @@ public:
     bool close() override;
     int doesUserExist(std::string username) override;
     int doesPasswordMatch(std::string username, std::string password) override;
-    int addNewUser(std::string username, std::string password, std::string email) override;
+    int addNewUser(std::string username, std::string password, std::string email, std::string address, std::string phone, std::string birthday) override;
 
 private:
     sqlite3* m_db;

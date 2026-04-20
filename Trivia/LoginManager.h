@@ -7,7 +7,7 @@ public:
 	LoginManager(IDatabase* IDB);
 	~LoginManager();
 
-	void signup(std::string name, std::string password, std::string mail);
+	void signup(std::string name, std::string password, std::string mail, std::string address, std::string phone, std::string birthday);
 	void login(std::string name, std::string password);
 	void logout(std::string name);
 private:

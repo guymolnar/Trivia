@@ -20,7 +20,9 @@ SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(std::vecto
 	std::string username = j.at("username");
 	std::string password = j.at("password");
 	std::string mail = j.at("mail");
+	std::string address = j.at("address");
+	std::string phone = j.at("phone");
+	std::string birthday = j.at("birthday");
 
-	SignupRequest info = { username, password, mail };
-	return info;
+	return SignupRequest{ username, password, mail, address, phone, birthday };
 }

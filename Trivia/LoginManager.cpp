@@ -10,13 +10,13 @@ LoginManager::~LoginManager()
 
 }
 
-void LoginManager::signup(std::string name, std::string password, std::string mail)
+void LoginManager::signup(std::string name, std::string password, std::string mail, std::string address, std::string phone, std::string birthday) 
 {
     if (m_database->doesUserExist(name))
     {
         throw std::exception("User already exists");
     }
-    m_database->addNewUser(name, password, mail);
+    m_database->addNewUser(name, password, mail, address, phone, birthday);
 }
 
 void LoginManager::login(std::string name, std::string password)
@@ -24,7 +24,9 @@ void LoginManager::login(std::string name, std::string password)
     for (auto& user : m_loggedUsers)
     {
         if (user.getUsername() == name)
+        {
             throw std::exception("User already logged in");
+        }
     }
     if (!m_database->doesUserExist(name))
     {
