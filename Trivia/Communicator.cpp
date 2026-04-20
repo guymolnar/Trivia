@@ -59,31 +59,19 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		m_clients[clientSocket] = new LoginRequestHandler(m_handlerFactory);
 	}
 
-	//std::string msg = "hello";
-	//send(clientSocket, msg.c_str(), msg.size(), 0);
-
-	uint8_t code = 0;
-	while (recv(clientSocket, reinterpret_cast<char*>(&code), 1, 0) > 0)
+	RequestInfo requestInfo;
+	while (readMessage(clientSocket, requestInfo))
 	{
-		uint8_t lenBytes[4] = {0};
-		recv(clientSocket, reinterpret_cast<char*>(lenBytes), 4, 0);
-		uint32_t jsonLen = ntohl(*reinterpret_cast<uint32_t*>(lenBytes));
-		int totalReceived = 0;
-		std::vector<uint8_t> payload(jsonLen);
-		while (totalReceived < (int)jsonLen)
-		{
-			int bytes = recv(clientSocket, reinterpret_cast<char*>(payload.data()) + totalReceived, jsonLen - totalReceived, 0);
-			if (bytes <= 0)
-				break;
-			totalReceived += bytes;
-		}
+		IRequestHandler* handler = m_clients[clientSocket];
 
-		RequestInfo requestInfo;
-		requestInfo.id = code;
-		requestInfo.receivalTime = time(nullptr);
-		requestInfo.buffer = payload;
-		RequestResult result = m_clients[clientSocket]->handleRequest(requestInfo);
+		if (!handler->isRequestRelevant(requestInfo))
+		{
+			continue;
+		}
+		RequestResult result = handler->handleRequest(requestInfo);
+
 		send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
+
 		{
 			std::lock_guard<std::mutex> lock(m_clientsMutex);
 			delete m_clients[clientSocket];
@@ -116,22 +104,29 @@ bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 {
 	uint8_t code;
 	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), 1))
+	{
 		return false;
-
+	}
 	uint8_t lenBytes[4];
 	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), 4))
+	{
 		return false;
+	}
 
 	uint32_t jsonLen;
 	memcpy(&jsonLen, lenBytes, 4);
 	jsonLen = ntohl(jsonLen);
 
 	if (jsonLen > 4096)
+	{
 		return false;
+	}
 
 	std::vector<uint8_t> payload(jsonLen);
 	if (!recvAll(clientSocket, reinterpret_cast<char*>(payload.data()), jsonLen))
+	{
 		return false;
+	}
 
 	requestInfo.id = code;
 	requestInfo.receivalTime = time(nullptr);
