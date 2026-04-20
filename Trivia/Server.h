@@ -27,6 +27,5 @@ public:
 private:
     Server();
 	IDatabase* m_database;
-	RequestHandlerFactory m_handlerFactory;
 	void getConsoleInput();
 };

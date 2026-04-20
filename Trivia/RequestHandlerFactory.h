@@ -5,12 +5,19 @@
 
 class RequestHandlerFactory {
 public:
-	RequestHandlerFactory(IDatabase* IDB);
+	static RequestHandlerFactory& getInstance(IDatabase* IDB)
+	{
+		static RequestHandlerFactory instance(IDB);
+		return instance;
+	}
+	RequestHandlerFactory(const RequestHandlerFactory&) = delete;
+	void operator=(const RequestHandlerFactory&) = delete;
 	~RequestHandlerFactory() = default;
 	LoginRequestHandler* createLoginRequestHandler();
 	MenuRequestHandler* createMenuRequestHandler();
 	LoginManager& getLoginManager();
 private:
+	RequestHandlerFactory(IDatabase* IDB);
 	LoginManager m_loginManager;
 	IDatabase* m_database;
 };

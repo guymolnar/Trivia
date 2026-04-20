@@ -1,6 +1,6 @@
 #include "Server.h"
 
-Server::Server() : m_database(&SqliteDataBase::getInstance()), m_handlerFactory(m_database)
+Server::Server() : m_database(&SqliteDataBase::getInstance())
 {
     m_database->open();
 }
@@ -8,7 +8,7 @@ Server::Server() : m_database(&SqliteDataBase::getInstance()), m_handlerFactory(
 
 void Server::run()
 {
-	std::thread t_connector(&Communicator::startHandleRequests, &Communicator::getInstance(m_handlerFactory));
+	std::thread t_connector(&Communicator::startHandleRequests, &Communicator::getInstance(RequestHandlerFactory::getInstance(m_database)));
 	t_connector.detach();
 
 	getConsoleInput();
