@@ -1,6 +1,6 @@
 #include "RequestHandlerFactory.h"
 
-RequestHandlerFactory::RequestHandlerFactory(IDatabase* IDB) : m_database(IDB), m_loginManager(IDB)
+RequestHandlerFactory::RequestHandlerFactory(IDatabase* IDB) : m_database(IDB)
 {
 
 }
@@ -17,5 +17,5 @@ MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler()
 
 LoginManager& RequestHandlerFactory::getLoginManager()
 {
-	return this->m_loginManager;
+	return LoginManager::getInstance(m_database);
 }

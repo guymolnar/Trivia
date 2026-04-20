@@ -18,6 +18,5 @@ public:
 	LoginManager& getLoginManager();
 private:
 	RequestHandlerFactory(IDatabase* IDB);
-	LoginManager m_loginManager;
 	IDatabase* m_database;
 };
