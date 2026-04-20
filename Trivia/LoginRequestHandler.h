@@ -21,4 +21,5 @@ private:
 	static bool isEmailValid(const std::string& email);
 	static bool isAddressValid(const std::string& address);
 	static bool isPhoneValid(const std::string& phone);
+	static bool isBirthdayValid(const std::string& birthday);
 };

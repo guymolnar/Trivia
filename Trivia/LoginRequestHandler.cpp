@@ -71,6 +71,11 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 			throw std::exception("Invalid phone");
 
 		}
+		if (!isBirthdayValid(req.birthday))
+		{
+			throw std::exception("Invalid birthday");
+		}
+
 		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email, req.address, req.phone, req.birthday);
 
 		SignupResponse response;
@@ -127,4 +132,10 @@ bool isPhoneValid(const std::string& phone)
 {
 	std::regex phoneRegex("^(0[0-9]|0[0-9]{2})-[0-9]+$");
 	return std::regex_match(phone, phoneRegex);
+}
+
+bool isBirthdayValid(const std::string& birthday)
+{
+	std::regex birthdayRegex("^[0-9]{1,2}[./][0-9]{1,2}[./][0-9]{4}$");
+	return std::regex_match(birthday, birthdayRegex);
 }
