@@ -28,6 +28,5 @@ private:
     Server();
 	IDatabase* m_database;
 	RequestHandlerFactory m_handlerFactory;
-	Communicator m_communicator;
 	void getConsoleInput();
 };
