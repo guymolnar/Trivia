@@ -6,7 +6,13 @@
 
 class SqliteDataBase : public IDatabase {
 public:
-    SqliteDataBase();
+    static SqliteDataBase& getInstance()
+    {
+        static SqliteDataBase instance;
+        return instance;
+    }
+    SqliteDataBase(const SqliteDataBase&) = delete;
+    void operator=(const SqliteDataBase&) = delete;
     ~SqliteDataBase();
     bool open() override;
     bool close() override;
@@ -15,5 +21,6 @@ public:
     int addNewUser(std::string username, std::string password, std::string email, std::string address, std::string phone, std::string birthday) override;
 
 private:
+    SqliteDataBase();
     sqlite3* m_db;
 };
