@@ -3,6 +3,7 @@
 #include "JsonRequestPacketDeserializer.h"
 #include "JsonResponsePacketSerializer.h"
 #include "LoginManager.h"
+#include <regex>
 
 class RequestHandlerFactory;
 
@@ -16,4 +17,5 @@ private:
 	RequestHandlerFactory& m_handlerFactory;
 	RequestResult login(const RequestInfo& requestInfo);
 	RequestResult signup(const RequestInfo& requestInfo);
+	static bool isPasswordValid(const std::string& password);
 };

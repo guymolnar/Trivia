@@ -54,6 +54,10 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 	try
 	{
 		SignupRequest req = JsonRequestPacketDeserializer::deserializeSignupRequest(requestInfo.buffer);
+		if (!isPasswordValid(req.password))
+		{
+			throw std::exception("Invalid password");
+		}
 		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email);
 
 		SignupResponse response;
@@ -74,4 +78,20 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 		result.newHandler = m_handlerFactory.createLoginRequestHandler();
 		return result;
 	}
+}
+
+bool LoginRequestHandler::isPasswordValid(const std::string& password)
+{
+	if (password.length() < 8)
+	{
+		return false;
+	}
+
+	std::regex hasUpper("[A-Z]");
+	std::regex hasLower("[a-z]");
+	std::regex hasDigit("[0-9]");
+	
+	return std::regex_search(password, hasUpper) &&
+		std::regex_search(password, hasLower) &&
+		std::regex_search(password, hasDigit);
 }
