@@ -90,8 +90,10 @@ bool LoginRequestHandler::isPasswordValid(const std::string& password)
 	std::regex hasUpper("[A-Z]");
 	std::regex hasLower("[a-z]");
 	std::regex hasDigit("[0-9]");
-	
+	std::regex hasSpecial("[!@#$%^&*]");
+
 	return std::regex_search(password, hasUpper) &&
 		std::regex_search(password, hasLower) &&
-		std::regex_search(password, hasDigit);
+		std::regex_search(password, hasDigit) &&
+		std::regex_search(password, hasSpecial);
 }
