@@ -31,3 +31,8 @@ std::vector<std::string> Room::getAllUsers()
     }
     return names;
 }
+
+RoomStatus Room::getRoomStatus()
+{
+    return m_metadata.status;
+}
