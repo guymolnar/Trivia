@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "LoggedUser.h"
+#include <vector>
 
 enum RoomStatus
 {
@@ -19,5 +21,12 @@ struct RoomData {
 
 
 class Room {
-
+public:
+	Room();
+	~Room();
+	void addUser(LoggedUser& newUser);
+	std::vector<std::string> getAllUsers();
+private:
+	RoomData m_metadata;
+	std::vector<LoggedUser> m_users;
 };
