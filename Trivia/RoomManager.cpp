@@ -29,5 +29,14 @@ RoomStatus RoomManager::getRoomState(roomID ID)
     {
         throw std::exception("Room does not exist");
     }
-    return r->getRoomStatus();
+    return r->getRoomMetadata().status;
+}
+
+std::vector<Room> RoomManager::getRooms()
+{
+    std::vector<Room> roomsVector;
+    for (auto& [id, room] : m_rooms)
+    {
+        roomsVector.push_back(room);
+    }
 }

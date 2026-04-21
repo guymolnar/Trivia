@@ -32,7 +32,7 @@ std::vector<std::string> Room::getAllUsers()
     return names;
 }
 
-RoomStatus Room::getRoomStatus()
+RoomData Room::getRoomMetadata()
 {
-    return m_metadata.status;
+    return m_metadata;
 }
