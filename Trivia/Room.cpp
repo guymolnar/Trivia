@@ -1,6 +1,6 @@
 #include "Room.h"
 
-Room::Room() : m_metadata()
+Room::Room(RoomData data) : m_metadata(data)
 {
 
 }
