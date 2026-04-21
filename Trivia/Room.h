@@ -23,8 +23,9 @@ struct RoomData {
 class Room {
 public:
 	Room();
-	~Room();
+	~Room() = default;
 	void addUser(LoggedUser& newUser);
+	void removeUser(LoggedUser& user);
 	std::vector<std::string> getAllUsers();
 private:
 	RoomData m_metadata;
