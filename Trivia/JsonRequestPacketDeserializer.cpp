@@ -2,27 +2,21 @@
 
 LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(std::vector<uint8_t> buffer)
 {
-	std::string jsonStr = std::string(buffer.begin(), buffer.end());
-	json j = json::parse(jsonStr);
+	json j = json::parse(buffer.begin(), buffer.end());
 
-	std::string username = j.at("username");
-	std::string password = j.at("password");
-
-	LoginRequest info = { username, password };
+	LoginRequest info = { j.at("username"), j.at("password") };
 	return info;
 }
 
 SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(std::vector<uint8_t> buffer)
 {
-	std::string jsonStr = std::string(buffer.begin(), buffer.end());
-	json j = json::parse(jsonStr);
+	json j = json::parse(buffer.begin(), buffer.end());
 
-	std::string username = j.at("username");
-	std::string password = j.at("password");
-	std::string mail = j.at("mail");
-	std::string address = j.at("address");
-	std::string phone = j.at("phone");
-	std::string birthday = j.at("birthday");
+	return SignupRequest{ j.at("username"), j.at("password"), j.at("mail"), j.at("address"), j.at("phone"), j.at("birthday") };
+}
 
-	return SignupRequest{ username, password, mail, address, phone, birthday };
+GetPlayersInRoomRequest JsonRequestPacketDeserializer::deserializeGetPlayersRequest(std::vector<uint8_t> buffer)
+{
+	json j = json::parse(buffer.begin(), buffer.end());
+	return GetPlayersInRoomRequest{ j.at("roomId") };
 }
