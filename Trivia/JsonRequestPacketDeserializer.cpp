@@ -4,8 +4,7 @@ LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(std::vector<
 {
 	json j = json::parse(buffer.begin(), buffer.end());
 
-	LoginRequest info = { j.at("username"), j.at("password") };
-	return info;
+	return LoginRequest{ j.at("username"), j.at("password") };
 }
 
 SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(std::vector<uint8_t> buffer)
@@ -25,4 +24,10 @@ JoinRoomRequest JsonRequestPacketDeserializer::deserializeJoinRoomRequest(std::v
 {
 	json j = json::parse(buffer.begin(), buffer.end());
 	return JoinRoomRequest{ j.at("roomId") };
+}
+
+CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(std::vector<uint8_t> buffer)
+{
+	json j = json::parse(buffer.begin(), buffer.end());
+	return CreateRoomRequest{ j.at("roomName"), j.at("maxUsers"), j.at("questionsCount"), j.at("answersTimeout") };
 }
