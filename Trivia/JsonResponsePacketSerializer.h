@@ -55,6 +55,13 @@ public:
 	static std::vector<uint8_t> serializeResponse(const LoginResponse& response);
 	static std::vector<uint8_t> serializeResponse(const SignupResponse& response);
 	static std::vector<uint8_t> serializeResponse(const ErrorResponse& response);
+	static std::vector<uint8_t> serializeResponse(const LogoutResponse& response);
+	static std::vector<uint8_t> serializeResponse(const GetRoomsResponse& response);
+	static std::vector<uint8_t> serializeResponse(const GetPlayersInRoomResponse& response);
+	static std::vector<uint8_t> serializeResponse(const JoinRoomResponse& response);
+	static std::vector<uint8_t> serializeResponse(const CreateRoomResponse& response);
+	static std::vector<uint8_t> serializeResponse(const GetHighScoreResponse& response);
+	static std::vector<uint8_t> serializeResponse(const GetPersonalStatsResponse& response);
 private:
 
 };
