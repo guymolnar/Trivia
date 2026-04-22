@@ -1,6 +1,6 @@
 #include "StatisticsManager.h"
 
-std::vector<std::string> getHighScore()
+std::vector<std::string> StatisticsManager::getHighScore()
 {
 	return SqliteDataBase::getInstance().getHighScores();
 }
