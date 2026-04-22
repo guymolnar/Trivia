@@ -20,3 +20,9 @@ GetPlayersInRoomRequest JsonRequestPacketDeserializer::deserializeGetPlayersRequ
 	json j = json::parse(buffer.begin(), buffer.end());
 	return GetPlayersInRoomRequest{ j.at("roomId") };
 }
+
+JoinRoomRequest JsonRequestPacketDeserializer::deserializeJoinRoomRequest(std::vector<uint8_t> buffer)
+{
+	json j = json::parse(buffer.begin(), buffer.end());
+	return JoinRoomRequest{ j.at("roomId") };
+}
