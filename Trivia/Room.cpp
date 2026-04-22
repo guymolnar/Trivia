@@ -5,6 +5,10 @@ Room::Room(RoomData data) : m_metadata(data)
 
 }
 
+Room::Room() : m_metadata()
+{
+}
+
 void Room::addUser(LoggedUser& newUser)
 {
 	m_users.push_back(newUser);
@@ -36,3 +40,4 @@ RoomData Room::getRoomMetadata()
 {
     return m_metadata;
 }
+

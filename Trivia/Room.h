@@ -23,6 +23,7 @@ struct RoomData {
 class Room {
 public:
 	Room(RoomData data);
+	Room();
 	~Room() = default;
 	void addUser(LoggedUser& newUser);
 	void removeUser(LoggedUser& user);
