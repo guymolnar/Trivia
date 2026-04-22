@@ -27,6 +27,12 @@ struct JoinRoomRequest {
 	unsigned int roomId;
 };
 
+struct CreateRoomRequest {
+	std::string roomName;
+	unsigned int maxUsers;
+	unsigned int questionsCount;
+	unsigned int answersTimeout;
+};
 
 class JsonRequestPacketDeserializer {
 public:
