@@ -34,3 +34,18 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Logou
 	json j = { {"status", response.status} };
 	return buildPacket(j.dump(), LOGOUT_RESPONSE_CODE);
 }
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& response)
+{
+	std::string rooms = "";
+	for (auto& room : response.rooms)
+	{
+		rooms += room.name + ", ";
+	}
+	if (!rooms.empty())
+	{
+		rooms.pop_back();
+	}
+	json j = { {"status", response.status}, {"Rooms", rooms} };
+	return buildPacket(j.dump(), GET_ROOMS_RESPONSE_CODE);
+}
