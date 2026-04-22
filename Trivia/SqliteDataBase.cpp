@@ -138,5 +138,11 @@ int SqliteDataBase::getPlayerScore(std::string username)
 
 std::vector<std::string> SqliteDataBase::getHighScores()
 {
-    return {};
+    std::vector<std::string> scores;
+    std::string query = "SELECT username FROM statistics ORDER BY (totalCorrectAnswers * 100 - (totalAnswers - totalCorrectAnswers) * 25) DESC LIMIT 5;";
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        reinterpret_cast<std::vector<std::string>*>(data)->push_back(argv[0]);
+        return 0;
+        }, &scores, nullptr);
+    return scores;
 }
