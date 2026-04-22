@@ -37,6 +37,11 @@ struct GetHighScoreResponse {
 	std::vector<std::string> statistics;
 };
 
+struct GetPersonalStatsResponse {
+	unsigned int status;
+	std::vector<std::string> statistics;
+};
+
 class JsonResponsePacketSerializer {
 public:
 	static std::vector<uint8_t> serializeResponse(const LoginResponse& response);
