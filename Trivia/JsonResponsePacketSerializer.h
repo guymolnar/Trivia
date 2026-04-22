@@ -46,6 +46,10 @@ struct JoinRoomResponse {
 	unsigned int status;
 };
 
+struct CreateRoomResponse {
+	unsigned int status;
+};
+
 class JsonResponsePacketSerializer {
 public:
 	static std::vector<uint8_t> serializeResponse(const LoginResponse& response);
