@@ -83,7 +83,15 @@ std::vector<Question> SqliteDataBase::getQuestions(int numOfQuestions)
 
 float SqliteDataBase::getPlayerAverageAnswerTime(std::string username)
 {
-    return 0.0f;
+    std::string query = "SELECT totalAnswerTime, totalAnswers FROM statistics WHERE username = '" + username + "';";
+    std::pair<float, int> data = { 0, 0 };
+    sqlite3_exec(m_db, query.c_str(), [](void* d, int, char** argv, char**) {
+        auto* p = reinterpret_cast<std::pair<float, int>*>(d);
+        p->first = std::stof(argv[0]);
+        p->second = std::stoi(argv[1]);
+        return 0;
+        }, &data, nullptr);
+    return data.second > 0 ? data.first / data.second : 0;
 }
 
 int SqliteDataBase::getNumOfCorrectAnswers(std::string username)
