@@ -63,5 +63,5 @@ public:
 	static std::vector<uint8_t> serializeResponse(const GetHighScoreResponse& response);
 	static std::vector<uint8_t> serializeResponse(const GetPersonalStatsResponse& response);
 private:
-
+	static std::vector<uint8_t> buildPacket(const std::string& jsonStr, uint8_t code);
 };
