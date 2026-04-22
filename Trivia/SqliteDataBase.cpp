@@ -118,7 +118,13 @@ int SqliteDataBase::getNumOfTotalAnswers(std::string username)
 
 int SqliteDataBase::getNumOfPlayerGames(std::string username)
 {
-    return 0;
+    std::string query = "SELECT numOfGames FROM statistics WHERE username = '" + username + "';";
+    int count = 0;
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        *reinterpret_cast<int*>(data) = std::stoi(argv[0]);
+        return 0;
+        }, &count, nullptr);
+    return count;
 }
 
 int SqliteDataBase::getPlayerScore(std::string username)
