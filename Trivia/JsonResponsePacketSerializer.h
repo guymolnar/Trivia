@@ -32,6 +32,10 @@ struct GetPlayersInRoomResponse {
 	std::vector<std::string> players;
 };
 
+struct GetHighScoreResponse {
+	unsigned int status;
+	std::vector<std::string> statistics;
+};
 
 class JsonResponsePacketSerializer {
 public:
