@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include <winsock2.h>
 #include "IRequestHandler.h"
+#include "Room.h"
 
 using json = nlohmann::json;
 struct LoginResponse {
@@ -20,6 +21,11 @@ struct ErrorResponse {
 
 struct LogoutResponse {
 	unsigned int status;
+};
+
+struct GetRoomsResponse {
+	unsigned int status;
+	std::vector<RoomData> rooms;
 };
 
 class JsonResponsePacketSerializer {
