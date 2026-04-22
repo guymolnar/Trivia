@@ -17,8 +17,12 @@ bool SqliteDataBase::open()
     }
     const char* createTable = "CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, email TEXT, address TEXT, phone TEXT, birthday TEXT);";
     sqlite3_exec(m_db, createTable, nullptr, nullptr, nullptr);
+
     std::string createQuestionsTable = "CREATE TABLE IF NOT EXISTS questions (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT NOT NULL, answer1 TEXT NOT NULL, answer2 TEXT NOT NULL, answer3 TEXT NOT NULL, answer4 TEXT NOT NULL, correctAnswerId INTEGER NOT NULL);";
     sqlite3_exec(m_db, createQuestionsTable.c_str(), nullptr, nullptr, nullptr);
+
+    std::string createStatisticsTable = "CREATE TABLE IF NOT EXISTS statistics (username TEXT PRIMARY KEY, totalCorrectAnswers INTEGER DEFAULT 0, totalWrongAnswers INTEGER DEFAULT 0, totalAnswerTime REAL DEFAULT 0, totalAnswers INTEGER DEFAULT 0, numOfGames INTEGER DEFAULT 0); ";
+    sqlite3_exec(m_db, createStatisticsTable.c_str(), nullptr, nullptr, nullptr);
     return true;
 }
 
