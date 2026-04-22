@@ -39,4 +39,5 @@ std::vector<Room> RoomManager::getRooms()
     {
         roomsVector.push_back(room);
     }
+    return roomsVector;
 }

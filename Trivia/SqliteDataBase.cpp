@@ -76,3 +76,33 @@ std::vector<Question> SqliteDataBase::getQuestions(int numOfQuestions)
 
     return questions;
 }
+
+float SqliteDataBase::getPlayerAverageAnswerTime(std::string username)
+{
+    return 0.0f;
+}
+
+int SqliteDataBase::getNumOfCorrectAnswers(std::string username)
+{
+    return 0;
+}
+
+int SqliteDataBase::getNumOfTotalAnswers(std::string username)
+{
+    return 0;
+}
+
+int SqliteDataBase::getNumOfPlayerGames(std::string username)
+{
+    return 0;
+}
+
+int SqliteDataBase::getPlayerScore(std::string username)
+{
+    return 0;
+}
+
+std::vector<std::string> SqliteDataBase::getHighScores()
+{
+    return {};
+}
