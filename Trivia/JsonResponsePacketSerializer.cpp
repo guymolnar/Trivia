@@ -50,6 +50,21 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRo
 	return buildPacket(j.dump(), GET_ROOMS_RESPONSE_CODE);
 }
 
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomResponse& response)
+{
+	std::string players = "";
+	for (auto& player : response.players)
+	{
+		players += player + ", ";
+	}
+	if (!players.empty())
+	{
+		players.pop_back();
+	}
+	json j = { {"PlayersInRoom", players} };
+	return buildPacket(j.dump(), GET_PLAYERS_IN_ROOM_RESPONSE_CODE);
+}
+
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const JoinRoomResponse& response)
 {
 	json j = { {"status", response.status} };
