@@ -16,7 +16,7 @@ public:
 	void createRoom(LoggedUser roomAdmin, RoomData roomData);
 	void deleteRoom(roomID ID);
 	RoomStatus getRoomState(roomID ID);
-	std::vector<RoomData> getRooms();
+	std::vector<Room> getRooms();
 	Room* getRoom(roomID id);
 private:
 	RoomManager() = default;
