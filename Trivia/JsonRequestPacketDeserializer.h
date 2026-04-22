@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "json.hpp"
+#include "Room.h"
 using json = nlohmann::json;
 
 struct LoginRequest {
@@ -17,6 +18,11 @@ struct SignupRequest {
 	std::string phone;
 	std::string birthday;
 };
+
+struct GetPlayersInRoomRequest {
+	unsigned int roomId;
+};
+
 
 class JsonRequestPacketDeserializer {
 public:
