@@ -17,6 +17,11 @@ struct SignupResponse {
 struct ErrorResponse {
 	std::string message;
 };
+
+struct LogoutResponse {
+	unsigned int status;
+};
+
 class JsonResponsePacketSerializer {
 public:
 	static std::vector<uint8_t> serializeResponse(const LoginResponse& response);
