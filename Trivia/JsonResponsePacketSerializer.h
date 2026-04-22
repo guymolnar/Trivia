@@ -28,6 +28,11 @@ struct GetRoomsResponse {
 	std::vector<RoomData> rooms;
 };
 
+struct GetPlayersInRoomResponse {
+	std::vector<std::string> players;
+};
+
+
 class JsonResponsePacketSerializer {
 public:
 	static std::vector<uint8_t> serializeResponse(const LoginResponse& response);
