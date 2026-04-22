@@ -23,6 +23,10 @@ struct GetPlayersInRoomRequest {
 	unsigned int roomId;
 };
 
+struct JoinRoomRequest {
+	unsigned int roomId;
+};
+
 
 class JsonRequestPacketDeserializer {
 public:
