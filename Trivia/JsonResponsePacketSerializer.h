@@ -42,6 +42,10 @@ struct GetPersonalStatsResponse {
 	std::vector<std::string> statistics;
 };
 
+struct JoinRoomResponse {
+	unsigned int status;
+};
+
 class JsonResponsePacketSerializer {
 public:
 	static std::vector<uint8_t> serializeResponse(const LoginResponse& response);
