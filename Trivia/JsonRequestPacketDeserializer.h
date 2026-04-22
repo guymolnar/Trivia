@@ -38,5 +38,8 @@ class JsonRequestPacketDeserializer {
 public:
 	static LoginRequest deserializeLoginRequest(std::vector<uint8_t> buffer);
 	static SignupRequest deserializeSignupRequest(std::vector<uint8_t> buffer);
+	static SignupRequest deserializeGetPlayersRequest(std::vector<uint8_t> buffer);
+	static SignupRequest deserializeJoinRoomRequest(std::vector<uint8_t> buffer);
+	static SignupRequest deserializeCreateRoomRequest(std::vector<uint8_t> buffer);
 
 };
