@@ -96,7 +96,13 @@ float SqliteDataBase::getPlayerAverageAnswerTime(std::string username)
 
 int SqliteDataBase::getNumOfCorrectAnswers(std::string username)
 {
-    return 0;
+    std::string query = "SELECT totalCorrectAnswers FROM statistics WHERE username = '" + username + "';";
+    int count = 0;
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        *reinterpret_cast<int*>(data) = std::stoi(argv[0]);
+        return 0;
+        }, &count, nullptr);
+    return count;
 }
 
 int SqliteDataBase::getNumOfTotalAnswers(std::string username)
