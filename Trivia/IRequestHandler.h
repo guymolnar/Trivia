@@ -1,6 +1,10 @@
 #pragma once
 #include <vector>
 
+#define LOGIN_REQUEST_CODE  201
+#define SIGNUP_REQUEST_CODE 202
+#define ERROR_REQUEST_CODE  200
+
 #define LOGIN_RESPONSE_CODE 101
 #define SIGNUP_RESPONSE_CODE 102
 #define ERROR_RESPONSE_CODE 100
