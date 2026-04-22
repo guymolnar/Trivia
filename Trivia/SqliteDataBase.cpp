@@ -129,7 +129,11 @@ int SqliteDataBase::getNumOfPlayerGames(std::string username)
 
 int SqliteDataBase::getPlayerScore(std::string username)
 {
-    return 0;
+    int correct = getNumOfCorrectAnswers(username);
+    int total = getNumOfTotalAnswers(username);
+    int wrong = total - correct;
+    float avgTime = getPlayerAverageAnswerTime(username);
+    return (correct * 100) - (wrong * 25) - (int)(avgTime * 5);
 }
 
 std::vector<std::string> SqliteDataBase::getHighScores()
