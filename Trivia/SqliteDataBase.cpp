@@ -17,8 +17,12 @@ bool SqliteDataBase::open()
     }
     const char* createTable = "CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, email TEXT, address TEXT, phone TEXT, birthday TEXT);";
     sqlite3_exec(m_db, createTable, nullptr, nullptr, nullptr);
+
     std::string createQuestionsTable = "CREATE TABLE IF NOT EXISTS questions (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT NOT NULL, answer1 TEXT NOT NULL, answer2 TEXT NOT NULL, answer3 TEXT NOT NULL, answer4 TEXT NOT NULL, correctAnswerId INTEGER NOT NULL);";
     sqlite3_exec(m_db, createQuestionsTable.c_str(), nullptr, nullptr, nullptr);
+
+    std::string createStatisticsTable = "CREATE TABLE IF NOT EXISTS statistics (username TEXT PRIMARY KEY, totalCorrectAnswers INTEGER DEFAULT 0, totalWrongAnswers INTEGER DEFAULT 0, totalAnswerTime REAL DEFAULT 0, totalAnswers INTEGER DEFAULT 0, numOfGames INTEGER DEFAULT 0); ";
+    sqlite3_exec(m_db, createStatisticsTable.c_str(), nullptr, nullptr, nullptr);
     return true;
 }
 
@@ -79,30 +83,66 @@ std::vector<Question> SqliteDataBase::getQuestions(int numOfQuestions)
 
 float SqliteDataBase::getPlayerAverageAnswerTime(std::string username)
 {
-    return 0.0f;
+    std::string query = "SELECT totalAnswerTime, totalAnswers FROM statistics WHERE username = '" + username + "';";
+    std::pair<float, int> data = { 0, 0 };
+    sqlite3_exec(m_db, query.c_str(), [](void* d, int, char** argv, char**) {
+        auto* p = reinterpret_cast<std::pair<float, int>*>(d);
+        p->first = std::stof(argv[0]);
+        p->second = std::stoi(argv[1]);
+        return 0;
+        }, &data, nullptr);
+    return data.second > 0 ? data.first / data.second : 0;
 }
 
 int SqliteDataBase::getNumOfCorrectAnswers(std::string username)
 {
-    return 0;
+    std::string query = "SELECT totalCorrectAnswers FROM statistics WHERE username = '" + username + "';";
+    int count = 0;
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        *reinterpret_cast<int*>(data) = std::stoi(argv[0]);
+        return 0;
+        }, &count, nullptr);
+    return count;
 }
 
 int SqliteDataBase::getNumOfTotalAnswers(std::string username)
 {
-    return 0;
+    std::string query = "SELECT totalAnswers FROM statistics WHERE username = '" + username + "';";
+    int count = 0;
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        *reinterpret_cast<int*>(data) = std::stoi(argv[0]);
+        return 0;
+        }, &count, nullptr);
+    return count;
 }
 
 int SqliteDataBase::getNumOfPlayerGames(std::string username)
 {
-    return 0;
+    std::string query = "SELECT numOfGames FROM statistics WHERE username = '" + username + "';";
+    int count = 0;
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        *reinterpret_cast<int*>(data) = std::stoi(argv[0]);
+        return 0;
+        }, &count, nullptr);
+    return count;
 }
 
 int SqliteDataBase::getPlayerScore(std::string username)
 {
-    return 0;
+    int correct = getNumOfCorrectAnswers(username);
+    int total = getNumOfTotalAnswers(username);
+    int wrong = total - correct;
+    float avgTime = getPlayerAverageAnswerTime(username);
+    return (correct * 100) - (wrong * 25) - (int)(avgTime * 5);
 }
 
 std::vector<std::string> SqliteDataBase::getHighScores()
 {
-    return {};
+    std::vector<std::string> scores;
+    std::string query = "SELECT username FROM statistics ORDER BY (totalCorrectAnswers * 100 - (totalAnswers - totalCorrectAnswers) * 25) DESC LIMIT 5;";
+    sqlite3_exec(m_db, query.c_str(), [](void* data, int, char** argv, char**) {
+        reinterpret_cast<std::vector<std::string>*>(data)->push_back(argv[0]);
+        return 0;
+        }, &scores, nullptr);
+    return scores;
 }
