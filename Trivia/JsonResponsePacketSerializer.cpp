@@ -82,3 +82,9 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetHi
 	json j = { {"status", response.status}, {"HighScores", response.statistics} };
 	return buildPacket(j.dump(), GET_HIGHSCORE_RESPONSE_CODE);
 }
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetPersonalStatsResponse& response)
+{
+	json j = { {"status", response.status}, {"UserStatistics", response.statistics} };
+	return buildPacket(j.dump(), GET_PERSONAL_STATS_RESPONSE_CODE);
+}
