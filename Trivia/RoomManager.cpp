@@ -1,3 +1,4 @@
+
 #include "RoomManager.h"
 
 void RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)

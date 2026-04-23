@@ -144,3 +144,20 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+    RequestResult MenuRequestHandler::createRoom(const RequestInfo& requestInfo)
+    {
+        try
+        {
+            CreateRoomRequest req = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
+            m_handlerFactory.getRoomManager().createRoom(m_user, {static_cast<unsigned int>(m_handlerFactory.getRoomManager().getRooms().size()), req.roomName, req.maxUsers, req.questionsCount, RoomStatus::ACTIVE });
+            //TODO: replace the id mechanism and switch from index-based
+            CreateRoomResponse response{ 1 };
+            return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        }
+        catch (const std::exception& e)
+        {
+            ErrorResponse err{ e.what() };
+            return { JsonResponsePacketSerializer::serializeResponse(err), this };
+        }
+    }
