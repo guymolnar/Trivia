@@ -50,3 +50,18 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo)
     ErrorResponse err{ "Request not relevant to MenuRequestHandler" };
     return { JsonResponsePacketSerializer::serializeResponse(err), this };
 }
+
+RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo)
+{
+    try 
+    {
+        m_handlerFactory.getLoginManager().logout(m_user.getUsername());
+        LogoutResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+    }
+    catch(const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
