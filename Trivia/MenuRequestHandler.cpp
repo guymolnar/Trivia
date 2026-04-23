@@ -128,3 +128,19 @@ RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo)
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
+{
+    try
+    {
+        JoinRoomRequest req = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer);
+        m_handlerFactory.getRoomManager().getRoom(req.roomId)->addUser(m_user);
+        JoinRoomResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
