@@ -113,3 +113,18 @@ RequestResult MenuRequestHandler::getPersonalStats(const RequestInfo& requestInf
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+RequestResult MenuRequestHandler::getHighScore(const RequestInfo& requestInfo)
+{
+    try
+    {
+        std::vector<std::string> highScore = m_handlerFactory.getStatisticsManager().getHighScore();
+        GetPersonalStatsResponse response{ 1, highScore };
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
