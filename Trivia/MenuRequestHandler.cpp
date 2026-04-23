@@ -65,3 +65,19 @@ RequestResult MenuRequestHandler::signout(const RequestInfo& requestInfo)
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+RequestResult MenuRequestHandler::getRooms(const RequestInfo& requestInfo)
+{
+    try
+    {
+        
+        std::vector<RoomData> rooms = m_handlerFactory.getRoomManager().getRooms();
+        GetRoomsResponse response{1, rooms};
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
