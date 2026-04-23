@@ -34,7 +34,7 @@ RequestResult LoginRequestHandler::login(const RequestInfo& requestInfo)
 
 		RequestResult result;
 		result.buffer = JsonResponsePacketSerializer::serializeResponse(response);
-		result.newHandler = m_handlerFactory.createMenuRequestHandler(new LoggedUser(req.username));
+		result.newHandler = m_handlerFactory.createMenuRequestHandler(*(new LoggedUser(req.username)));
 		return result;
 	}
 	catch (const std::exception&)
@@ -83,7 +83,7 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 
 		RequestResult result;
 		result.buffer = JsonResponsePacketSerializer::serializeResponse(response);
-		result.newHandler = m_handlerFactory.createMenuRequestHandler();
+		result.newHandler = m_handlerFactory.createMenuRequestHandler(*(new LoggedUser(req.username)));
 		return result;
 	}
 	catch (const std::exception&)

@@ -2,6 +2,7 @@
 
 #include "IDatabase.h"
 #include "sqlite3.h"
+#include "Question.h"
 #include <string>
 
 class SqliteDataBase : public IDatabase {
