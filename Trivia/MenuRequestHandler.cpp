@@ -81,3 +81,20 @@ RequestResult MenuRequestHandler::getRooms(const RequestInfo& requestInfo)
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+RequestResult MenuRequestHandler::getPlayersInRoom(const RequestInfo& requestInfo)
+{
+    try
+    {
+
+        GetPlayersInRoomRequest req = JsonRequestPacketDeserializer::deserializeGetPlayersRequest(requestInfo.buffer);
+        std::vector<std::string> roomUsers = m_handlerFactory.getRoomManager().getRoom(req.roomId)->getAllUsers();
+        GetPlayersInRoomResponse response{roomUsers};
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
