@@ -1,3 +1,4 @@
+
 #include "RoomManager.h"
 
 void RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
@@ -32,12 +33,12 @@ RoomStatus RoomManager::getRoomState(roomID ID)
     return r->getRoomMetadata().status;
 }
 
-std::vector<Room> RoomManager::getRooms()
+std::vector<RoomData> RoomManager::getRooms()
 {
-    std::vector<Room> roomsVector;
+    std::vector<RoomData> roomsVector;
     for (auto& [id, room] : m_rooms)
     {
-        roomsVector.push_back(room);
+        roomsVector.push_back(room.getRoomMetadata());
     }
     return roomsVector;
 }
