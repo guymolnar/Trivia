@@ -7,7 +7,13 @@ MenuRequestHandler::MenuRequestHandler(RequestHandlerFactory& handlerFactory, Lo
 
 bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
 {
-    return false;
+    return requestInfo.id == LOGOUT_REQUEST_CODE ||
+        requestInfo.id == GET_ROOMS_REQUEST_CODE ||
+        requestInfo.id == GET_PLAYERS_REQUEST_CODE ||
+        requestInfo.id == JOIN_ROOM_REQUEST_CODE ||
+        requestInfo.id == CREATE_ROOM_REQUEST_CODE ||
+        requestInfo.id == HIGH_SCORE_REQUEST_CODE ||
+        requestInfo.id == PERSONAL_STATS_REQUEST_CODE;
 }
 
 RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo)
