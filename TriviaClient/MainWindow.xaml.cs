@@ -20,5 +20,15 @@ namespace TriviaClient
         {
             InitializeComponent();
         }
+        private void btnSignup_Click(object sender, RoutedEventArgs e)
+        {
+            SignupWindow signup = new SignupWindow();
+            signup.Show();
+            this.Close();
+        }
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
