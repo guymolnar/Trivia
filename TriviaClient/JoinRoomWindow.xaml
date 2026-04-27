@@ -1,0 +1,24 @@
+﻿<Window x:Class="TriviaClient.JoinRoomWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cahoot - Join Room" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="400" Margin="20">
+                <TextBlock TextAlignment="Center" FontWeight="ExtraBold" FontSize="50" Margin="0,0,0,10">Cahoot!</TextBlock>
+                <TextBlock TextAlignment="Center" FontSize="16" Margin="0,0,0,20">Select a room to join:</TextBlock>
+
+                <ListBox x:Name="lstRooms" Height="200" Margin="0,0,0,20" FontSize="14"/>
+
+                <Button x:Name="btnJoin" Click="btnJoin_Click"
+                        Padding="10" FontSize="16" Margin="0,0,0,10">Join Room</Button>
+
+                <Button x:Name="btnBack" Click="btnBack_Click"
+                        Padding="10" FontSize="14">Back to Hub</Button>
+
+                <TextBlock x:Name="txtError" Foreground="Red"
+                           TextAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

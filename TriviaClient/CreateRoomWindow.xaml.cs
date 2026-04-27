@@ -19,20 +19,26 @@ namespace TriviaClient
     /// </summary>
     public partial class CreateRoomWindow : Window
     {
-        public CreateRoomWindow()
+        private string _username;
+
+        public CreateRoomWindow(string username)
         {
             InitializeComponent();
+            _username = username;
         }
+
         private void backToMenuBtn_click(object sender, RoutedEventArgs e)
         {
-            MainWindow menu = new MainWindow();
-            menu.Show();
+            HubWindow hub = new HubWindow(_username);
+            hub.Show();
             this.Close();
         }
+
         private void createRoomBtn_click(object sender, RoutedEventArgs e)
         {
-            MainWindow menu = new MainWindow();
-            menu.Show();
+            // TODO: send create room request to server
+            RoomLobbyWindow lobby = new RoomLobbyWindow(_username, roomName.Text, _username);
+            lobby.Show();
             this.Close();
         }
     }

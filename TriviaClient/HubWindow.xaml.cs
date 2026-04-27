@@ -4,20 +4,25 @@ namespace TriviaClient
 {
     public partial class HubWindow : Window
     {
+        private string _username;
+
         public HubWindow(string username)
         {
             InitializeComponent();
+            _username = username;
             txtWelcome.Text = $"Welcome, {username}!";
         }
 
         private void btnJoinRoom_Click(object sender, RoutedEventArgs e)
         {
-            // join room logic will go here
+            JoinRoomWindow joinRoom = new JoinRoomWindow(_username);
+            joinRoom.Show();
+            this.Close();
         }
 
         private void btnCreateRoom_Click(object sender, RoutedEventArgs e)
         {
-            CreateRoomWindow createRoomWindow = new CreateRoomWindow();
+            CreateRoomWindow createRoomWindow = new CreateRoomWindow(_username);
             createRoomWindow.Show();
             this.Close();
         }
