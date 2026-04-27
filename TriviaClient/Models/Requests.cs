@@ -25,7 +25,7 @@ namespace TriviaClient.Models
     {
         public string? username;
         public string? password;
-        public string? email;
+        public string? mail;
         public string? address;
         public string? phone;
         public string? birthday;
