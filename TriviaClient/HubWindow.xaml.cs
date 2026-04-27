@@ -29,12 +29,16 @@ namespace TriviaClient
 
         private void btnMyStats_Click(object sender, RoutedEventArgs e)
         {
-            // personal stats logic will go here
+            StatisticsWindow stats = new StatisticsWindow(_username);
+            stats.Show();
+            this.Close();
         }
 
         private void btnBestScores_Click(object sender, RoutedEventArgs e)
         {
-            // best scores logic will go here
+            HighScoresWindow highScores = new HighScoresWindow(_username);
+            highScores.Show();
+            this.Close();
         }
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)
