@@ -25,13 +25,23 @@ namespace TriviaClient
         }
         private void btnSignup_Click(object sender, RoutedEventArgs e)
         {
-            // signup logic will go here
+            // TODO: send signup request to server and check response
+            HubWindow hub = new HubWindow(txtUsername.Text);
+            hub.Show();
+            this.Close();
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow login = new MainWindow();
+            LoginWindow login = new LoginWindow();
             login.Show();
+            this.Close();
+        }
+
+        private void btnMainMenu_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = new MainWindow();
+            main.Show();
             this.Close();
         }
     }
