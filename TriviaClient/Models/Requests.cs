@@ -16,6 +16,8 @@ namespace TriviaClient.Models
     //And it's kind of annoying
 
     public class LogoutRequest : IRequest { }
+
+    public class HighScoreRequest : IRequest { }
     public class LoginRequest : IRequest
     {
         public string? username;

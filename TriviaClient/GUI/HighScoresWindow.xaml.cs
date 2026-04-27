@@ -1,4 +1,7 @@
 using System.Windows;
+using TriviaClient.Models;
+using TriviaClient.Networking;
+using static TriviaClient.Models.RequestCodes;
 
 namespace TriviaClient
 {
@@ -10,6 +13,28 @@ namespace TriviaClient
         {
             InitializeComponent();
             _username = username;
+            try
+            {
+                Communicator.Instance.SendRequest(HIGH_SCORE_REQUEST_CODE, new HighScoreRequest());
+                var (code, json) = Communicator.Instance.ReceiveResponse();
+
+                if (code == 100)
+                {
+                    lstHighScores.Items.Add("Failed to load scores.");
+                    return;
+                }
+
+                var response = JsonDeserializer.Deserialize<GetHighScoreResponse>(json);
+                int rank = 1;
+                foreach (var score in response.HighScores)
+                {
+                    lstHighScores.Items.Add($"{rank++}. {score}");
+                }
+            }
+            catch (Exception ex)
+            {
+                lstHighScores.Items.Add(ex.Message);
+            }
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)

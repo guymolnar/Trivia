@@ -35,7 +35,7 @@ namespace TriviaClient.Models
     public class GetHighScoreResponse
     {
         public int status;
-        public string? HighScores;
+        public List<string>? HighScores;
     }
 
     public class GetPersonalStatsResponse
