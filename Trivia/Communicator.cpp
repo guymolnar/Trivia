@@ -1,4 +1,5 @@
 #include "Communicator.h"
+#include "RequestHandlerFactory.h"
 
 static const unsigned short PORT = 8826;
 static const unsigned int IFACE = 0;
@@ -86,7 +87,11 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			m_clients[clientSocket] = result.newHandler;
 		}
 	}
-
+	LoggedUser* user = m_clients[clientSocket]->getLoggedUser();
+	if (user)
+	{
+		m_handlerFactory.getLoginManager().logout(user->getUsername());
+	}
 	{
 		std::lock_guard<std::mutex> lock(m_clientsMutex);
 		delete m_clients[clientSocket];

@@ -28,7 +28,7 @@ namespace TriviaClient
 
                 if (response.status == 0)
                 {
-                    txtError.Text = "Incorrect username or password.";
+                    txtError.Text = "Invalid login.";
                     return;
                 }
                 HubWindow hub = new HubWindow(txtUsername.Text);

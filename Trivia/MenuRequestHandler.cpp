@@ -16,6 +16,11 @@ bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
         requestInfo.id == PERSONAL_STATS_REQUEST_CODE;
 }
 
+LoggedUser* MenuRequestHandler::getLoggedUser()
+{
+    return &m_user;
+}
+
 RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo)
 {
     if (requestInfo.id == LOGOUT_REQUEST_CODE)
