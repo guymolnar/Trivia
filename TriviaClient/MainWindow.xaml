@@ -7,23 +7,15 @@
         mc:Ignorable="d"
         Title="Cahoot" Height="450" Width="800">
     <Grid>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="300">
-            <TextBlock TextAlignment="Center" FontWeight="ExtraBold" FontSize="50" Margin="0,0,0,30">Cahoot!</TextBlock>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="350" Margin="20">
+            <TextBlock TextAlignment="Center" FontWeight="ExtraBold" FontSize="50" Margin="0,0,0,10">Cahoot!</TextBlock>
+            <TextBlock TextAlignment="Center" FontSize="16" Margin="0,0,0,30">The ultimate trivia experience</TextBlock>
 
-            <TextBlock FontWeight="Bold" Margin="0,0,0,5">Username:</TextBlock>
-            <TextBox x:Name="txtUsername" Margin="0,0,0,15" Padding="5" FontSize="14"/>
+            <Button x:Name="btnLogin" Click="btnLogin_Click"
+                    Padding="10" FontSize="16" Margin="0,0,0,10">Login</Button>
 
-            <TextBlock FontWeight="Bold" Margin="0,0,0,5">Password:</TextBlock>
-            <PasswordBox x:Name="txtPassword" Margin="0,0,0,20" Padding="5" FontSize="14"/>
-
-            <Button x:Name="btnLogin" Click="btnLogin_Click" 
-                    Padding="10" FontSize="14" Margin="0,0,0,10">Login</Button>
-
-            <Button x:Name="btnSignup" Click="btnSignup_Click" 
-                    Padding="10" FontSize="14">Don't have an account? Sign up</Button>
-
-            <TextBlock x:Name="txtError" Foreground="Red" 
-                       TextAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap"/>
+            <Button x:Name="btnSignup" Click="btnSignup_Click"
+                    Padding="10" FontSize="16">Sign Up</Button>
         </StackPanel>
     </Grid>
 </Window>
