@@ -18,10 +18,14 @@ namespace TriviaClient.Networking
 
         public void Connect()
         {
-            this._client = new TcpClient(Server, PORT);
-            this._stream = this._client.GetStream();
+            _client = new TcpClient(Server, PORT);
+            _stream = this._client.GetStream();
         }
-        public void Disconnect();
+        public void Disconnect()
+        {
+            _stream?.Close();
+            _client?.Close();
+        }
         public void SendRequest(byte code, IRequest request);
         public (byte code, string json) ReceiveResponse();
     }
