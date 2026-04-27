@@ -1,4 +1,7 @@
 using System.Windows;
+using TriviaClient.Models;
+using TriviaClient.Networking;
+using static TriviaClient.Models.RequestCodes;
 
 namespace TriviaClient
 {
@@ -43,6 +46,17 @@ namespace TriviaClient
 
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                Communicator.Instance.SendRequest(LOGOUT_REQUEST_CODE, new LogoutRequest());
+                var (code, json) = Communicator.Instance.ReceiveResponse();
+            }
+            catch (Exception ex)
+            {
+                txtError.Text = "Could not logout.";
+                return;
+            }
+            Communicator.Instance.Disconnect();
             LoginWindow login = new LoginWindow();
             login.Show();
             this.Close();

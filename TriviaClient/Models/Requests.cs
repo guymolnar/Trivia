@@ -15,6 +15,7 @@ namespace TriviaClient.Models
     //A: because without it the vs warns that strings are non-nullable
     //And it's kind of annoying
 
+    public class LogoutRequest : IRequest { }
     public class LoginRequest : IRequest
     {
         public string? username;
