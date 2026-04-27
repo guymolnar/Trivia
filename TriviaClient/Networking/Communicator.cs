@@ -26,7 +26,11 @@ namespace TriviaClient.Networking
             _stream?.Close();
             _client?.Close();
         }
-        public void SendRequest(byte code, IRequest request);
+        public void SendRequest(byte code, IRequest request)
+        {
+            byte[] buffer = JsonSerializer.Serialize(code, request);
+            _stream?.Write(buffer, 0, buffer.Length);
+        }
         public (byte code, string json) ReceiveResponse();
     }
 }
