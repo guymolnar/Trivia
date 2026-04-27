@@ -16,8 +16,11 @@
                 <TextBlock FontWeight="Bold" Margin="0,0,0,5">Room Name:</TextBlock>
                 <TextBox x:Name="roomName" Margin="0,0,0,15" Padding="5" FontSize="14"/>
 
+                <TextBlock FontWeight="Bold" Margin="0,0,0,5">Number Of Questions:</TextBlock>
+                <TextBox x:Name="numOfQuestions" Margin="0,0,0,15" Padding="5" FontSize="14"/>
+
                 <TextBlock FontWeight="Bold" Margin="0,0,0,5">Time Per Question:</TextBlock>
-                <PasswordBox x:Name="timePerQuestion" Margin="0,0,0,15" Padding="5" FontSize="14"/>
+                <TextBox x:Name="timePerQuestion" Margin="0,0,0,15" Padding="5" FontSize="14"/>
 
                 <TextBlock FontWeight="Bold" Margin="0,0,0,5">Maximum Number Of Players::</TextBlock>
                 <TextBox x:Name="numOfPlayers" Margin="0,0,0,15" Padding="5" FontSize="14"/>

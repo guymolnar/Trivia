@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TriviaClient.Models;
+using TriviaClient.Networking;
+using static TriviaClient.Models.RequestCodes;
 
 namespace TriviaClient
 {
@@ -36,10 +39,33 @@ namespace TriviaClient
 
         private void createRoomBtn_click(object sender, RoutedEventArgs e)
         {
-            // TODO: send create room request to server
-            RoomLobbyWindow lobby = new RoomLobbyWindow(_username, roomName.Text, _username);
-            lobby.Show();
-            this.Close();
+            try
+            {
+                Communicator.Instance.Connect();
+                Communicator.Instance.SendRequest(CREATE_ROOM_REQUEST_CODE, new CreateRoomRequest
+                {
+                    roomName = roomName.Text,
+                    questionsCount = int.Parse(numOfQuestions.Text),
+                    answersTimeout = int.Parse(timePerQuestion.Text),
+                    maxUsers = int.Parse(numOfPlayers.Text),
+                });
+
+                var (code, json) = Communicator.Instance.ReceiveResponse();
+                var response = JsonDeserializer.Deserialize<CreateRoomResponse>(json);
+
+                if (response.status == 0 || code == 100)
+                {
+                    txtError.Text = "Invalid Room Creation";
+                    return;
+                }
+                RoomLobbyWindow lobby = new RoomLobbyWindow(_username, roomName.Text, _username);
+                lobby.Show();
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                txtError.Text = "Could not connect to server.";
+            }
         }
     }
 }
