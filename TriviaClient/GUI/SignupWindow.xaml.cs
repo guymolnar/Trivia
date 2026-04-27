@@ -59,6 +59,7 @@ namespace TriviaClient
             }
         }
 
+
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
             LoginWindow login = new LoginWindow();
