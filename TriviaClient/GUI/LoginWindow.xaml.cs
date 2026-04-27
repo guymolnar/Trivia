@@ -1,4 +1,7 @@
 using System.Windows;
+using TriviaClient.Models;
+using TriviaClient.Networking;
+using static TriviaClient.Models.RequestCodes;
 
 namespace TriviaClient
 {
@@ -11,10 +14,31 @@ namespace TriviaClient
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: send login request to server and check response
-            HubWindow hub = new HubWindow(txtUsername.Text);
-            hub.Show();
-            this.Close();
+            try
+            {
+                Communicator.Instance.Connect();
+                Communicator.Instance.SendRequest(LOGIN_REQUEST_CODE, new LoginRequest
+                {
+                    username = txtUsername.Text,
+                    password = txtPassword.Password,
+                });
+
+                var (code, json) = Communicator.Instance.ReceiveResponse();
+                var response = JsonDeserializer.Deserialize<LoginResponse>(json);
+
+                if (response.status == 0)
+                {
+                    txtError.Text = "Incorrect username or password.";
+                    return;
+                }
+                HubWindow hub = new HubWindow(txtUsername.Text);
+                hub.Show();
+                this.Close();
+            }   
+            catch (Exception ex) 
+            {
+                txtError.Text = "Could not connect to server.";
+            }
         }
 
         private void btnSignup_Click(object sender, RoutedEventArgs e)
