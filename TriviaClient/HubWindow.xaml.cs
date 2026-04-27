@@ -17,7 +17,9 @@ namespace TriviaClient
 
         private void btnCreateRoom_Click(object sender, RoutedEventArgs e)
         {
-            // create room logic will go here
+            CreateRoomWindow createRoomWindow = new CreateRoomWindow();
+            createRoomWindow.Show();
+            this.Close();
         }
 
         private void btnMyStats_Click(object sender, RoutedEventArgs e)
