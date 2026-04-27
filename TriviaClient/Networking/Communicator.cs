@@ -31,6 +31,30 @@ namespace TriviaClient.Networking
             byte[] buffer = JsonSerializer.Serialize(code, request);
             _stream?.Write(buffer, 0, buffer.Length);
         }
-        public (byte code, string json) ReceiveResponse();
+        public (byte code, string json) ReceiveResponse()
+        {
+            byte[] header = new byte[5];
+            int bytesRead = 0;
+            while (bytesRead < 5)
+            {
+                bytesRead += _stream!.Read(header, bytesRead, 5 - bytesRead);
+            }
+            byte code = header[0];
+            byte[] lenBytes = new byte[] { header[1], header[2], header[3], header[4] };
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(lenBytes);
+            }
+
+            int length = BitConverter.ToInt32(lenBytes, 0);
+
+            byte[] body = new byte[length];
+            bytesRead = 0;
+            while (bytesRead < length)
+            {
+                bytesRead += _stream!.Read(body, bytesRead, length - bytesRead);
+            }
+            return (code, Encoding.UTF8.GetString(body));
+        }
     }
 }
