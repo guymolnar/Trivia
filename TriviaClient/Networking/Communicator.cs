@@ -19,6 +19,7 @@ namespace TriviaClient.Networking
         public void Connect()
         {
             this._client = new TcpClient(Server, PORT);
+            this._stream = this._client.GetStream();
         }
         public void Disconnect();
         public void SendRequest(byte code, IRequest request);
