@@ -47,9 +47,31 @@ namespace TriviaClient
                 txtError.Text = "Please select a room.";
                 return;
             }
-            RoomLobbyWindow lobby = new RoomLobbyWindow(_username, lstRooms.SelectedItem.ToString(), "Admin");
-            lobby.Show();
-            this.Close();
+            int roomId = lstRooms.SelectedIndex;
+            try
+            {
+                Communicator.Instance.SendRequest(JOIN_ROOM_REQUEST_CODE, new JoinRoomRequest
+                {
+                    roomId = roomId
+                });
+                var (code, json) = Communicator.Instance.ReceiveResponse();
+                if (code == 100)
+                {
+                    txtError.Text = "Failed to join rooms.";
+                    return;
+                }
+                var response = JsonDeserializer.Deserialize<JoinRoomResponse>(json);
+                if (response.status == 0)
+                {
+                    txtError.Text = "Could not join room.";
+                    return;
+                }
+                RoomLobbyWindow lobby = new RoomLobbyWindow(_username, _roomNames[roomId], roomId);
+            }
+            catch (Exception ex)
+            {
+                txtError.Text = ex.Message;
+            }
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)

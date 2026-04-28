@@ -93,7 +93,12 @@ RequestResult MenuRequestHandler::getPlayersInRoom(const RequestInfo& requestInf
     {
 
         GetPlayersInRoomRequest req = JsonRequestPacketDeserializer::deserializeGetPlayersRequest(requestInfo.buffer);
-        std::vector<std::string> roomUsers = m_handlerFactory.getRoomManager().getRoom(req.roomId)->getAllUsers();
+        Room* room = m_handlerFactory.getRoomManager().getRoom(req.roomId);
+        if (!room) 
+        {
+            throw std::exception("Room not found");
+        }
+        std::vector<std::string> roomUsers = room->getAllUsers();
         GetPlayersInRoomResponse response{roomUsers};
         return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }
@@ -139,7 +144,12 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
     try
     {
         JoinRoomRequest req = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(requestInfo.buffer);
-        m_handlerFactory.getRoomManager().getRoom(req.roomId)->addUser(m_user);
+        Room* room = m_handlerFactory.getRoomManager().getRoom(req.roomId);
+        if (!room)
+        {
+            throw std::exception("Room not found");
+        }
+        room->getAllUsers();
         JoinRoomResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }
@@ -155,9 +165,8 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
         try
         {
             CreateRoomRequest req = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
-            m_handlerFactory.getRoomManager().createRoom(m_user, {static_cast<unsigned int>(m_handlerFactory.getRoomManager().getRooms().size()), req.roomName, req.maxUsers, req.questionsCount, RoomStatus::ACTIVE });
-            //TODO: replace the id mechanism and switch from index-based
-            CreateRoomResponse response{ 1 };
+            unsigned int newRoomId = m_handlerFactory.getRoomManager().createRoom(m_user, { 0, req.roomName, req.maxUsers, req.questionsCount, req.answersTimeout, RoomStatus::ACTIVE });       
+            CreateRoomResponse response{ 1, newRoomId};
             return { JsonResponsePacketSerializer::serializeResponse(response), this };
         }
         catch (const std::exception& e)

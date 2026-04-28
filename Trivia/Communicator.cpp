@@ -86,6 +86,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			delete m_clients[clientSocket];
 			m_clients[clientSocket] = result.newHandler;
 		}
+		if (!result.newHandler) break;
 	}
 	LoggedUser* user = m_clients[clientSocket]->getLoggedUser();
 	if (user)

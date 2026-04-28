@@ -75,7 +75,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const JoinR
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse& response)
 {
-	json j = { {"status", response.status} };
+	json j = { {"status", response.status}, {"roomId", response.roomId} };
 	return buildPacket(j.dump(), CREATE_ROOM_RESPONSE_CODE);
 }
 
