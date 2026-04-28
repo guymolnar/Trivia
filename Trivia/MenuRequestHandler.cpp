@@ -170,7 +170,7 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
         try
         {
             CreateRoomRequest req = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
-            unsigned int newRoomId = m_handlerFactory.getRoomManager().createRoom(m_user, { 0, req.roomName, req.maxUsers, req.questionsCount, req.answersTimeout, RoomStatus::ACTIVE });       
+            unsigned int newRoomId = m_handlerFactory.getRoomManager().createRoom(m_user, { 0, req.roomName, req.maxUsers, req.questionsCount, req.answersTimeout, RoomStatus::INACTIVE });       
             CreateRoomResponse response{ 1, newRoomId};
             return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createRoomAdminRequestHandler(m_user, newRoomId) };
         }
