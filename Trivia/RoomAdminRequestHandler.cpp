@@ -14,7 +14,7 @@ bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
         requestInfo.id == START_GAME_REQUEST_CODE || requestInfo.id == GET_ROOM_STATE_REQUEST_CODE;
 }
 
-RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo)
+RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestInfo)
 {
     if (requestInfo.id == CLOSE_ROOM_REQUEST_CODE)
     {
@@ -31,4 +31,19 @@ RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo)
 
     ErrorResponse err{ "Request not relevant to RoomAdminRequestHandler" };
     return { JsonResponsePacketSerializer::serializeResponse(err), this };
+}
+
+RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
+{
+    try
+    {
+        m_handlerFactory.getRoomManager().deleteRoom(m_room.getRoomMetadata().id);
+        CloseRoomResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
 }
