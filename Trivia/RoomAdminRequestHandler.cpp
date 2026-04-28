@@ -57,8 +57,7 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 {
     try
     {
-        m_handlerFactory.getRoomManager(). .deleteRoom(m_room.getRoomMetadata().id);
-        CloseRoomResponse response{ 1 };
+        StartGameResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
     }
     catch (const std::exception& e)
@@ -66,4 +65,3 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
         ErrorResponse err{ e.what() };
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
-}
