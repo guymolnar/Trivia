@@ -9,7 +9,22 @@ RoomMemberRequestHandler::RoomMemberRequestHandler(RequestHandlerFactory& handle
 {
 }
 
-bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
+bool RoomMemberRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
 {
     return requestInfo.id == LEAVE_ROOM_REQUEST_CODE || requestInfo.id == GET_ROOM_STATE_REQUEST_CODE;
+}
+
+RequestResult RoomMemberRequestHandler::handleRequest(const RequestInfo& requestInfo)
+{
+    if (requestInfo.id == LEAVE_ROOM_REQUEST_CODE)
+    {
+        return leaveRoom(requestInfo);
+    }
+    if (requestInfo.id == GET_ROOM_STATE_REQUEST_CODE)
+    {
+        return getRoomState(requestInfo);
+    }
+
+    ErrorResponse err{ "Request not relevant to RoomMemberRequestHandler" };
+    return { JsonResponsePacketSerializer::serializeResponse(err), this };
 }
