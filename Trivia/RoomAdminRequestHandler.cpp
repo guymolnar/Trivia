@@ -33,11 +33,31 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
     return { JsonResponsePacketSerializer::serializeResponse(err), this };
 }
 
+LoggedUser* RoomAdminRequestHandler::getLoggedUser()
+{
+    return &m_user;
+}
+
 RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 {
     try
     {
         m_handlerFactory.getRoomManager().deleteRoom(m_room.getRoomMetadata().id);
+        CloseRoomResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
+
+RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
+{
+    try
+    {
+        m_handlerFactory.getRoomManager(). .deleteRoom(m_room.getRoomMetadata().id);
         CloseRoomResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
     }

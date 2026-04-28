@@ -13,6 +13,8 @@ public:
 	~RoomAdminRequestHandler() = default;
 	bool isRequestRelevant(const RequestInfo& requestInfo) override;
 	RequestResult handleRequest(const RequestInfo& requestInfo) override;
+	LoggedUser* getLoggedUser() override;
+
 	
 private:
 	LoggedUser m_user;
