@@ -48,11 +48,5 @@ namespace TriviaClient
             this.Close();
         }
 
-        private void btnMainMenu_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow main = new MainWindow();
-            main.Show();
-            this.Close();
-        }
     }
 }

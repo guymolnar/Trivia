@@ -18,6 +18,8 @@ namespace TriviaClient.Models
     public class LogoutRequest : IRequest { }
 
     public class HighScoreRequest : IRequest { }
+
+    public class PersonalStatsRequest : IRequest { }
     public class LoginRequest : IRequest
     {
         public string? username;

@@ -26,7 +26,7 @@ namespace TriviaClient
 
                 var response = JsonDeserializer.Deserialize<GetHighScoreResponse>(json);
                 int rank = 1;
-                foreach (var score in response.HighScores)
+                foreach (var score in response.HighScores!)
                 {
                     lstHighScores.Items.Add($"{rank++}. {score}");
                 }
