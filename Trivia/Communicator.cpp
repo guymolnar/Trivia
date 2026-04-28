@@ -169,3 +169,28 @@ bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 	requestInfo.buffer = payload;
 	return true;
 }
+
+void Communicator::broadcast(const std::vector<std::string>& usernames, const std::vector<uint8_t>& message)
+{
+	std::lock_guard<std::mutex> lock(m_clientsMutex);
+	for (auto& [sock, handler] : m_clients)
+	{
+		if (!handler) 
+		{
+			continue;
+		}
+		LoggedUser* user = handler->getLoggedUser();
+		if (!user) 
+		{
+			continue;
+		}
+		for (const auto& name : usernames)
+		{
+			if (user->getUsername() == name)
+			{
+				send(sock, reinterpret_cast<const char*>(message.data()), message.size(), 0);
+				break;
+			}
+		}
+	}
+}
