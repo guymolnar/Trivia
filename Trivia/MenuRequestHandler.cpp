@@ -156,7 +156,7 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
         }
         room->addUser(m_user);
         JoinRoomResponse response{ 1 };
-        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createRoomMemberRequestHandler(m_user, req.roomId) };
     }
     catch (const std::exception& e)
     {

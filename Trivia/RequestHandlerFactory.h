@@ -5,6 +5,7 @@
 #include "RoomManager.h"
 #include "StatisticsManager.h"
 #include "RoomAdminRequestHandler.h"
+#include "RoomMemberRequestHandler.h"
 
 class RequestHandlerFactory {
 public:
@@ -19,6 +20,7 @@ public:
     LoginRequestHandler* createLoginRequestHandler();
     MenuRequestHandler* createMenuRequestHandler(LoggedUser user);
     RoomAdminRequestHandler* createRoomAdminRequestHandler(LoggedUser user, unsigned int roomId);
+    RoomMemberRequestHandler* createRoomMemberRequestHandler(LoggedUser user, unsigned int roomId);
     LoginManager& getLoginManager();
     RoomManager& getRoomManager();
     StatisticsManager& getStatisticsManager();
