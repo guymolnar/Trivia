@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "LoggedUser.h"
 
 #define ERROR_RESPONSE_CODE 100
 #define LOGIN_RESPONSE_CODE 101
@@ -40,4 +41,5 @@ public:
 	virtual ~IRequestHandler() = default;
 	virtual bool isRequestRelevant(const RequestInfo& requestInfo) = 0;
 	virtual RequestResult handleRequest(const RequestInfo& requestInfo) = 0;
+	virtual LoggedUser* getLoggedUser() { return nullptr; }
 };

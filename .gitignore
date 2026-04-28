@@ -442,3 +442,6 @@ x64/
 Debug/
 Release/
 *.db
+bin/
+obj/
+*.user

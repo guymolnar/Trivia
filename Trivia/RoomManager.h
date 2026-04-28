@@ -13,7 +13,7 @@ public:
 	}
 	RoomManager(const RoomManager&) = delete;
 	void operator=(const RoomManager&) = delete;
-	void createRoom(LoggedUser roomAdmin, RoomData roomData);
+	unsigned int createRoom(LoggedUser roomAdmin, RoomData roomData);
 	void deleteRoom(roomID ID);
 	RoomStatus getRoomState(roomID ID);
 	std::vector<RoomData> getRooms();
@@ -21,5 +21,6 @@ public:
 private:
 	RoomManager() = default;
 	std::unordered_map<roomID, Room> m_rooms;
+	unsigned int m_nextRoomId = 0;
 
 };

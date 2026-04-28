@@ -9,6 +9,7 @@ public:
 	~MenuRequestHandler() = default;
 	bool isRequestRelevant(const RequestInfo& requestInfo) override;
 	RequestResult handleRequest(const RequestInfo& requestInfo) override;
+	LoggedUser* getLoggedUser() override;
 private:
 	LoggedUser m_user;
 	RequestHandlerFactory& m_handlerFactory;
@@ -19,4 +20,5 @@ private:
 	RequestResult getHighScore(const RequestInfo& requestInfo);
 	RequestResult joinRoom(const RequestInfo& requestInfo);
 	RequestResult createRoom(const RequestInfo& requestInfo);
+
 };
