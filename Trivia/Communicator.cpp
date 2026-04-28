@@ -60,39 +60,61 @@ void Communicator::startHandleRequests()
 
 void Communicator::handleNewClient(SOCKET clientSocket)
 {
+	try
 	{
-		std::lock_guard<std::mutex> lock(m_clientsMutex);
-		m_clients[clientSocket] = new LoginRequestHandler(m_handlerFactory);
-	}
-
-	RequestInfo requestInfo;
-	while (readMessage(clientSocket, requestInfo))
-	{
-		IRequestHandler* handler = m_clients[clientSocket];
-
-		if (!handler->isRequestRelevant(requestInfo))
 		{
-			continue;
+			std::lock_guard<std::mutex> lock(m_clientsMutex);
+			m_clients[clientSocket] = new LoginRequestHandler(m_handlerFactory);
 		}
-		RequestResult result = handler->handleRequest(requestInfo);
 
-		if (send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0) == SOCKET_ERROR)
+		RequestInfo requestInfo;
+		while (readMessage(clientSocket, requestInfo))
 		{
-			throw std::exception(__FUNCTION__ " - send");
+			IRequestHandler* handler = m_clients[clientSocket];
+
+			if (!handler->isRequestRelevant(requestInfo))
+			{
+				continue;
+			}
+
+			RequestResult result = handler->handleRequest(requestInfo);
+
+			send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
+
+			{
+				std::lock_guard<std::mutex> lock(m_clientsMutex);
+				IRequestHandler* old = m_clients[clientSocket];
+				m_clients[clientSocket] = result.newHandler;
+				if (old != result.newHandler)
+				{
+					delete old;
+				}
+			}
+			if (!result.newHandler) break;
 		}
 
 		{
 			std::lock_guard<std::mutex> lock(m_clientsMutex);
-			delete m_clients[clientSocket];
-			m_clients[clientSocket] = result.newHandler;
+			IRequestHandler* handler = m_clients[clientSocket];
+			if (handler)
+			{
+				LoggedUser* user = handler->getLoggedUser();
+				if (user)
+				{
+					m_handlerFactory.getLoginManager().logout(user->getUsername());
+				}
+			}
 		}
-		if (!result.newHandler) break;
 	}
-	LoggedUser* user = m_clients[clientSocket]->getLoggedUser();
-	if (user)
+	catch (const std::exception& e)
 	{
-		m_handlerFactory.getLoginManager().logout(user->getUsername());
+		std::cerr << "Client handler error: " << e.what() << std::endl;
 	}
+	catch (...)
+	{
+		std::cerr << "Unknown error in client handler" << std::endl;
+	}
+
 	{
 		std::lock_guard<std::mutex> lock(m_clientsMutex);
 		delete m_clients[clientSocket];

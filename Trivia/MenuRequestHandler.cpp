@@ -149,7 +149,12 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
         {
             throw std::exception("Room not found");
         }
-        room->getAllUsers();
+        RoomData meta = room->getRoomMetadata();
+        if (room->getAllUsers().size() >= meta.maxPlayers)
+        {
+            throw std::exception("Room is full");
+        }
+        room->addUser(m_user);
         JoinRoomResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }
