@@ -10,14 +10,14 @@ unsigned int RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
     return roomData.id;
 }
 
-void RoomManager::deleteRoom(roomID ID)
+void RoomManager::deleteRoom(unsigned int id)
 {
-    m_rooms.erase(ID);
+    m_rooms.erase(id);
 }
 
-Room* RoomManager::getRoom(roomID ID)
+Room* RoomManager::getRoom(unsigned int id)
 {
-    auto it = m_rooms.find(ID);
+    auto it = m_rooms.find(id);
     if (it == m_rooms.end())
     {
         return nullptr;
@@ -25,9 +25,9 @@ Room* RoomManager::getRoom(roomID ID)
     return &it->second;
 }
 
-RoomStatus RoomManager::getRoomState(roomID ID)
+RoomStatus RoomManager::getRoomState(unsigned int id)
 {
-    Room* r = getRoom(ID);
+    Room* r = getRoom(id);
     if (!r)
     {
         throw std::exception("Room does not exist");

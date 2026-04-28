@@ -70,6 +70,7 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		RequestInfo requestInfo;
 		while (readMessage(clientSocket, requestInfo))
 		{
+			std::lock_guard<std::mutex> lock(m_clientsMutex);
 			IRequestHandler* handler = m_clients[clientSocket];
 
 			if (!handler->isRequestRelevant(requestInfo))
@@ -78,18 +79,15 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			}
 
 			RequestResult result = handler->handleRequest(requestInfo);
-
 			send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
 
+			IRequestHandler* old = m_clients[clientSocket];
+			m_clients[clientSocket] = result.newHandler;
+			if (old != result.newHandler)
 			{
-				std::lock_guard<std::mutex> lock(m_clientsMutex);
-				IRequestHandler* old = m_clients[clientSocket];
-				m_clients[clientSocket] = result.newHandler;
-				if (old != result.newHandler)
-				{
-					delete old;
-				}
+				delete old;
 			}
+
 			if (!result.newHandler) break;
 		}
 
@@ -168,4 +166,32 @@ bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 	requestInfo.receivalTime = time(nullptr);
 	requestInfo.buffer = payload;
 	return true;
+}
+
+void Communicator::broadcast(const std::vector<std::string>& usernames, const std::vector<uint8_t>& message)
+{
+	std::lock_guard<std::mutex> lock(m_clientsMutex);
+	for (auto& [sock, handler] : m_clients)
+	{
+		if (!handler) 
+		{
+			continue;
+		}
+		LoggedUser* user = handler->getLoggedUser();
+		if (!user) 
+		{
+			continue;
+		}
+		for (const auto& name : usernames)
+		{
+			if (user->getUsername() == name)
+			{
+				send(sock, reinterpret_cast<const char*>(message.data()), message.size(), 0);
+				IRequestHandler* old = handler;
+				handler = m_handlerFactory.createMenuRequestHandler(*user);
+				delete old;
+				break;
+			}
+		}
+	}
 }

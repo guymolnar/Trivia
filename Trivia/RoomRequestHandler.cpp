@@ -21,7 +21,8 @@ RequestResult RoomRequestHandler::getRoomState(const RequestInfo& requestInfo)
         Room* room = m_roomManager.getRoom(m_roomId);
         if (!room)
         {
-            throw std::exception("Room not found");
+            ErrorResponse err{ "Room not found" };
+            return { JsonResponsePacketSerializer::serializeResponse(err), m_handlerFactory.createMenuRequestHandler(m_user) };
         }
         RoomData meta = room->getRoomMetadata();
         std::vector<std::string> players = room->getAllUsers();
