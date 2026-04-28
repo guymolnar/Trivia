@@ -65,3 +65,20 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
         ErrorResponse err{ e.what() };
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
+}
+
+RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestInfo)
+{
+    try
+    {
+        RoomData meta = m_room.getRoomMetadata();
+        std::vector<std::string> players = m_room.getAllUsers();
+        GetRoomStateResponse response{ 1, false, players, meta.numOfQuestions, meta.timePerQuestions };
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
