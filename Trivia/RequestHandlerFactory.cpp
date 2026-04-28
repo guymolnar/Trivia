@@ -15,6 +15,11 @@ MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(LoggedUser u
     return new MenuRequestHandler(*this, user);
 }
 
+RoomAdminRequestHandler* RequestHandlerFactory::createRoomAdminRequestHandler(LoggedUser user, Room room)
+{
+    return new RoomAdminRequestHandler(*this, user, room.getRoomMetadata().id);
+}
+
 LoginManager& RequestHandlerFactory::getLoginManager()
 {
     return LoginManager::getInstance(m_database);
