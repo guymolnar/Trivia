@@ -13,3 +13,22 @@ bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
     return requestInfo.id == CLOSE_ROOM_REQUEST_CODE ||
         requestInfo.id == START_GAME_REQUEST_CODE || requestInfo.id == GET_ROOM_STATE_REQUEST_CODE;
 }
+
+RequestResult MenuRequestHandler::handleRequest(const RequestInfo& requestInfo)
+{
+    if (requestInfo.id == CLOSE_ROOM_REQUEST_CODE)
+    {
+        return closeRoom(requestInfo);
+    }
+    if (requestInfo.id == START_GAME_REQUEST_CODE)
+    {
+        return startGame(requestInfo);
+    }
+    if (requestInfo.id == GET_ROOM_STATE_REQUEST_CODE)
+    {
+        return getRoomState(requestInfo);
+    }
+
+    ErrorResponse err{ "Request not relevant to RoomAdminRequestHandler" };
+    return { JsonResponsePacketSerializer::serializeResponse(err), this };
+}
