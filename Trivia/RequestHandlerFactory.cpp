@@ -20,6 +20,11 @@ RoomAdminRequestHandler* RequestHandlerFactory::createRoomAdminRequestHandler(Lo
     return new RoomAdminRequestHandler(*this, user, roomId);
 }
 
+RoomMemberRequestHandler* RequestHandlerFactory::createRoomMemberRequestHandler(LoggedUser user, unsigned int roomId)
+{
+    return new RoomMemberRequestHandler(*this, user, roomId);
+}
+
 LoginManager& RequestHandlerFactory::getLoginManager()
 {
     return LoginManager::getInstance(m_database);
