@@ -1,11 +1,13 @@
 
 #include "RoomManager.h"
 
-void RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
+unsigned int RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
 {
+    roomData.id = m_nextRoomId++;
     Room newRoom(roomData);
     newRoom.addUser(roomAdmin);
     m_rooms[roomData.id] = newRoom;
+    return roomData.id;
 }
 
 void RoomManager::deleteRoom(roomID ID)

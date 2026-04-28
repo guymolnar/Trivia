@@ -1,4 +1,7 @@
 using System.Windows;
+using TriviaClient.Models;
+using TriviaClient.Networking;
+using static TriviaClient.Models.RequestCodes;
 
 namespace TriviaClient
 {
@@ -10,7 +13,32 @@ namespace TriviaClient
         {
             InitializeComponent();
             _username = username;
-            // TODO: load personal stats from server
+            try
+            {
+                Communicator.Instance.SendRequest(PERSONAL_STATS_REQUEST_CODE, new PersonalStatsRequest());
+                var (code, json) = Communicator.Instance.ReceiveResponse();
+
+                if (code == 100)
+                {
+                    lstStats.Items.Add("Failed to load stats.");
+                    return;
+                }
+
+                var response = JsonDeserializer.Deserialize<GetPersonalStatsResponse>(json);
+                if (response.UserStatistics == null)
+                {
+                    lstStats.Items.Add("No stats yet.");
+                    return;
+                }
+                foreach (var stat in response.UserStatistics)
+                {
+                    lstStats.Items.Add(stat);
+                }
+            }
+            catch (Exception ex)
+            {
+                lstStats.Items.Add(ex.Message);
+            }
         }
 
         private void btnBack_Click(object sender, RoutedEventArgs e)

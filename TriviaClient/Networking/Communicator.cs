@@ -16,6 +16,10 @@ namespace TriviaClient.Networking
         private TcpClient? _client;
         private NetworkStream? _stream;
 
+        private static Communicator? _instance;
+        public static Communicator Instance => _instance ??= new Communicator();
+        private Communicator() { }
+
         public void Connect()
         {
             _client = new TcpClient(Server, PORT);

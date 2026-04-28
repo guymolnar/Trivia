@@ -45,6 +45,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRo
 	if (!rooms.empty())
 	{
 		rooms.pop_back();
+		rooms.pop_back();
 	}
 	json j = { {"status", response.status}, {"Rooms", rooms} };
 	return buildPacket(j.dump(), GET_ROOMS_RESPONSE_CODE);
@@ -60,6 +61,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetPl
 	if (!players.empty())
 	{
 		players.pop_back();
+		players.pop_back();
 	}
 	json j = { {"PlayersInRoom", players} };
 	return buildPacket(j.dump(), GET_PLAYERS_IN_ROOM_RESPONSE_CODE);
@@ -73,7 +75,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const JoinR
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse& response)
 {
-	json j = { {"status", response.status} };
+	json j = { {"status", response.status}, {"roomId", response.roomId} };
 	return buildPacket(j.dump(), CREATE_ROOM_RESPONSE_CODE);
 }
 

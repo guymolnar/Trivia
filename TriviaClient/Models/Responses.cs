@@ -35,13 +35,13 @@ namespace TriviaClient.Models
     public class GetHighScoreResponse
     {
         public int status;
-        public string? HighScores;
+        public List<string>? HighScores;
     }
 
     public class GetPersonalStatsResponse
     {
         public int status;
-        public string? UserStatistics;
+        public List<string>? UserStatistics;
     }
 
     public class GetPlayersInRoomResponse
@@ -57,6 +57,7 @@ namespace TriviaClient.Models
     public class CreateRoomResponse
     {
         public int status;
+        public int roomId;
     }
 
 }
