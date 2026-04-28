@@ -1,10 +1,11 @@
 #include "RoomAdminRequestHandler.h"
+#include "RequestHandlerFactory.h"
 
 RoomAdminRequestHandler::RoomAdminRequestHandler(RequestHandlerFactory& handlerFactory, LoggedUser user, unsigned int roomId)
-    : m_handlerFactory(handlerFactory),
-    m_user(user),
+    : m_user(user),
+    m_roomId(roomId),
     m_roomManager(handlerFactory.getRoomManager()),
-    m_room(*handlerFactory.getRoomManager().getRoom(roomId))
+    m_handlerFactory(handlerFactory)
 {
 }
 
@@ -42,7 +43,7 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 {
     try
     {
-        m_handlerFactory.getRoomManager().deleteRoom(m_room.getRoomMetadata().id);
+        m_handlerFactory.getRoomManager().deleteRoom(m_roomId);
         CloseRoomResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
     }
@@ -71,8 +72,13 @@ RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestIn
 {
     try
     {
-        RoomData meta = m_room.getRoomMetadata();
-        std::vector<std::string> players = m_room.getAllUsers();
+        Room* room = m_roomManager.getRoom(m_roomId);
+        if (!room)
+        {
+            throw std::exception("Room not found");
+        }
+        RoomData meta = room->getRoomMetadata();
+        std::vector<std::string> players = room->getAllUsers();
         GetRoomStateResponse response{ 1, false, players, meta.numOfQuestions, meta.timePerQuestions };
         return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }

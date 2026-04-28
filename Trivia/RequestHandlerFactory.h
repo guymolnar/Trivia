@@ -18,7 +18,7 @@ public:
     ~RequestHandlerFactory() = default;
     LoginRequestHandler* createLoginRequestHandler();
     MenuRequestHandler* createMenuRequestHandler(LoggedUser user);
-    RoomAdminRequestHandler* createRoomAdminRequestHandler(LoggedUser user, Room room);
+    RoomAdminRequestHandler* createRoomAdminRequestHandler(LoggedUser user, unsigned int roomId);
     LoginManager& getLoginManager();
     RoomManager& getRoomManager();
     StatisticsManager& getStatisticsManager();

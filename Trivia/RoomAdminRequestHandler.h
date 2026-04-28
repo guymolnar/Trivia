@@ -2,7 +2,6 @@
 #include "IRequestHandler.h"
 #include "Room.h"
 #include "RoomManager.h"
-#include "RequestHandlerFactory.h"
 #include "LoggedUser.h"
 class RequestHandlerFactory;
 
@@ -18,7 +17,7 @@ public:
 	
 private:
 	LoggedUser m_user;
-	Room& m_room;
+	unsigned int m_roomId;
 	RoomManager& m_roomManager;
 	RequestHandlerFactory& m_handlerFactory;
 	RequestResult closeRoom(const RequestInfo& requestInfo);
