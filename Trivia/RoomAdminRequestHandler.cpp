@@ -50,6 +50,12 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
 {
     try
     {
+        Room* room = m_roomManager.getRoom(m_roomId);
+        if (!room)
+        {
+            throw std::exception("Room not found");
+        }
+        room->setStatus(RoomStatus::ACTIVE);
         StartGameResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
     }
