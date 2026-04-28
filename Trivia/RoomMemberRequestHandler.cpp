@@ -45,7 +45,7 @@ RequestResult RoomMemberRequestHandler::leaveRoom(const RequestInfo& requestInfo
         }
         room->removeUser(m_user);
         LeaveRoomResponse response{ 1 };
-        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+        return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user)};
     }
     catch (const std::exception& e)
     {
