@@ -28,3 +28,8 @@ RequestResult RoomMemberRequestHandler::handleRequest(const RequestInfo& request
     ErrorResponse err{ "Request not relevant to RoomMemberRequestHandler" };
     return { JsonResponsePacketSerializer::serializeResponse(err), this };
 }
+
+LoggedUser* RoomMemberRequestHandler::getLoggedUser()
+{
+    return &m_user;
+}
