@@ -31,11 +31,6 @@ RequestResult RoomAdminRequestHandler::handleRequest(const RequestInfo& requestI
     return { JsonResponsePacketSerializer::serializeResponse(err), this };
 }
 
-LoggedUser* RoomAdminRequestHandler::getLoggedUser()
-{
-    return &m_user;
-}
-
 RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
 {
     try
@@ -57,27 +52,6 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
     {
         StartGameResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
-    }
-    catch (const std::exception& e)
-    {
-        ErrorResponse err{ e.what() };
-        return { JsonResponsePacketSerializer::serializeResponse(err), this };
-    }
-}
-
-RequestResult RoomAdminRequestHandler::getRoomState(const RequestInfo& requestInfo)
-{
-    try
-    {
-        Room* room = m_roomManager.getRoom(m_roomId);
-        if (!room)
-        {
-            throw std::exception("Room not found");
-        }
-        RoomData meta = room->getRoomMetadata();
-        std::vector<std::string> players = room->getAllUsers();
-        GetRoomStateResponse response{ 1, false, players, meta.numOfQuestions, meta.timePerQuestions };
-        return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }
     catch (const std::exception& e)
     {
