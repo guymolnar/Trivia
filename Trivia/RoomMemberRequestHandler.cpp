@@ -8,3 +8,8 @@ RoomMemberRequestHandler::RoomMemberRequestHandler(RequestHandlerFactory& handle
     m_handlerFactory(handlerFactory)
 {
 }
+
+bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
+{
+    return requestInfo.id == LEAVE_ROOM_REQUEST_CODE || requestInfo.id == GET_ROOM_STATE_REQUEST_CODE;
+}
