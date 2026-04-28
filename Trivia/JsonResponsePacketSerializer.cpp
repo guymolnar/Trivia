@@ -102,3 +102,9 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Start
 	json j = { {"status", response.status} };
 	return buildPacket(j.dump(), START_GAME_RESPONSE_CODE);
 }
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRoomStateResponse& response)
+{
+	json j = { {"status", response.status}, {"hasGameBegan", response.hasGameBegun}, {"players", response.players}, {"questionCount", response.questionCount}, {"answerTimeOut", response.answerTimeout}};
+	return buildPacket(j.dump(), GET_ROOM_STATE_RESPONSE);
+}
