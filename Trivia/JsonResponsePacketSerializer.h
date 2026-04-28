@@ -55,6 +55,10 @@ struct CloseRoomResponse {
 	unsigned int status;
 };
 
+struct StartGameResponse {
+	unsigned int status;
+};
+
 class JsonResponsePacketSerializer {
 public:
 	static std::vector<uint8_t> serializeResponse(const LoginResponse& response);
