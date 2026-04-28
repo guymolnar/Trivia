@@ -20,6 +20,8 @@ namespace TriviaClient.Models
     public class HighScoreRequest : IRequest { }
 
     public class PersonalStatsRequest : IRequest { }
+
+    public class GetRoomsRequest : IRequest { }
     public class LoginRequest : IRequest
     {
         public string? username;
