@@ -41,7 +41,6 @@ namespace TriviaClient
         {
             try
             {
-                Communicator.Instance.Connect();
                 Communicator.Instance.SendRequest(CREATE_ROOM_REQUEST_CODE, new CreateRoomRequest
                 {
                     roomName = roomName.Text,
@@ -58,7 +57,7 @@ namespace TriviaClient
                     txtError.Text = "Invalid Room Creation";
                     return;
                 }
-                RoomLobbyWindow lobby = new RoomLobbyWindow(_username, roomName.Text, _username);
+                RoomLobbyWindow lobby = new RoomLobbyWindow(_username, roomName.Text, response.roomId);
                 lobby.Show();
                 this.Close();
             }

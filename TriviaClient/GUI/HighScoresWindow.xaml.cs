@@ -26,6 +26,11 @@ namespace TriviaClient
 
                 var response = JsonDeserializer.Deserialize<GetHighScoreResponse>(json);
                 int rank = 1;
+                if (response.HighScores == null)
+                {
+                    lstHighScores.Items.Add("No scores yet.");
+                    return;
+                }
                 foreach (var score in response.HighScores!)
                 {
                     lstHighScores.Items.Add($"{rank++}. {score}");
