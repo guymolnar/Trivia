@@ -33,3 +33,17 @@ LoggedUser* RoomMemberRequestHandler::getLoggedUser()
 {
     return &m_user;
 }
+
+RequestResult RoomMemberRequestHandler::leaveRoom(const RequestInfo& requestInfo)
+{
+    try
+    {
+        LeaveRoomResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
