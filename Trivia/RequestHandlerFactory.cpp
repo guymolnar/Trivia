@@ -15,6 +15,11 @@ MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(LoggedUser u
     return new MenuRequestHandler(*this, user);
 }
 
+RoomAdminRequestHandler* RequestHandlerFactory::createRoomAdminRequestHandler(LoggedUser user, unsigned int roomId)
+{
+    return new RoomAdminRequestHandler(*this, user, roomId);
+}
+
 LoginManager& RequestHandlerFactory::getLoginManager()
 {
     return LoginManager::getInstance(m_database);
