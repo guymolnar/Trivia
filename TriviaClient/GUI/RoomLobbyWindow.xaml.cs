@@ -79,6 +79,19 @@ namespace TriviaClient
                             roomId = _roomId 
                         });
                         var (code, json) = Communicator.Instance.ReceiveResponse();
+
+                        if (code == 113) 
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                MessageBox.Show("The room was closed by the admin.", "Room Closed");
+                                HubWindow hub = new HubWindow(_username);
+                                hub.Show();
+                                this.Close();
+                            });
+                            return;
+                        }
+
                         var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
 
                         if (code == 100 || response.status == 0)
@@ -124,6 +137,7 @@ namespace TriviaClient
         private void StopRefreshing()
         {
             _refreshing = false;
+            _refreshingThread?.Join();
         }
 
         private void btnLeave_Click(object sender, RoutedEventArgs e)
