@@ -36,10 +36,10 @@ struct CreateRoomRequest {
 
 class JsonRequestPacketDeserializer {
 public:
-	static LoginRequest deserializeLoginRequest(std::vector<uint8_t> buffer);
-	static SignupRequest deserializeSignupRequest(std::vector<uint8_t> buffer);
-	static GetPlayersInRoomRequest deserializeGetPlayersRequest(std::vector<uint8_t> buffer);
-	static JoinRoomRequest deserializeJoinRoomRequest(std::vector<uint8_t> buffer);
-	static CreateRoomRequest deserializeCreateRoomRequest(std::vector<uint8_t> buffer);
+	static LoginRequest deserializeLoginRequest(const std::vector<uint8_t>& buffer);
+	static SignupRequest deserializeSignupRequest(const std::vector<uint8_t>& buffer);
+	static GetPlayersInRoomRequest deserializeGetPlayersRequest(const std::vector<uint8_t>& buffer);
+	static JoinRoomRequest deserializeJoinRoomRequest(const std::vector<uint8_t>& buffer);
+	static CreateRoomRequest deserializeCreateRoomRequest(const std::vector<uint8_t>& buffer);
 
 };
