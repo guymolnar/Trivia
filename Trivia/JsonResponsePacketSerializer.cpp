@@ -40,7 +40,7 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRo
 	std::string rooms = "";
 	for (auto& room : response.rooms)
 	{
-		rooms += room.name + ", ";
+		rooms += std::to_string(room.id) + ":" + room.name + ", ";
 	}
 	if (!rooms.empty())
 	{
