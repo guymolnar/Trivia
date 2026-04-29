@@ -17,5 +17,9 @@ namespace TriviaClient.Models
         public const byte LOGOUT_REQUEST_CODE = 207;
         public const byte GET_ROOMS_REQUEST_CODE = 208;
         public const byte PERSONAL_STATS_REQUEST_CODE = 209;
+        public const byte CLOSE_ROOM_REQUEST_CODE = 210;
+        public const byte START_GAME_REQUEST_CODE = 211;
+        public const byte GET_ROOM_STATE_REQUEST_CODE = 212;
+        public const byte LEAVE_ROOM_REQUEST_CODE = 213;
     }
 }

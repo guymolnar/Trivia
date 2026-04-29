@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using TriviaClient.Models;
 using TriviaClient.Networking;
 using static TriviaClient.Models.RequestCodes;
@@ -53,6 +53,14 @@ namespace TriviaClient
             HubWindow hub = new HubWindow(_username);
             hub.Show();
             this.Close();
+        }
+
+        private void btnCloseRoom_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void btnStartGame_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

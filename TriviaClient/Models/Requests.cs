@@ -55,4 +55,24 @@ namespace TriviaClient.Models
         public int questionsCount;
         public int answersTimeout;
     }
+
+    public class CloseRoomRequest : IRequest
+    {
+        public int roomId;
+    }
+
+    public class StartGameRequest : IRequest
+    {
+        public int roomId;
+    }
+
+    public class GetRoomStateRequest : IRequest
+    {
+        public int roomId;
+    }
+
+    public class LeaveRoomRequest : IRequest
+    {
+        public int roomId;
+    }
 }

@@ -29,7 +29,7 @@ namespace TriviaClient
                     return;
                 }
                 _roomNames = response.Rooms.Split(", ").ToList();
-                foreach (var roomName in _roomNames )
+                foreach (var roomName in _roomNames)
                 {
                     lstRooms.Items.Add(roomName);
                 }
