@@ -16,7 +16,7 @@ namespace TriviaClient
             txtRoomName.Text = roomName;
             try
             {
-                Communicator.Instance.SendRequest(GET_PLAYERS_REQUEST_CODE, new GetPlayersInRoomRequest
+                Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest
                 {
                     roomId = roomId,
                 });
@@ -28,19 +28,18 @@ namespace TriviaClient
                     return;
                 }
 
-                var response = JsonDeserializer.Deserialize<GetPlayersInRoomResponse>(json);
-                if (string.IsNullOrEmpty(response.PlayersInRoom))
+                var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
+                if (response.players == null || response.players.Count == 0)
                 {
                     lstPlayers.Items.Add("No players yet.");
                     return;
                 }
 
-                var players = response.PlayersInRoom.Split(", ");
-                foreach (var player in players)
+                foreach (var player in response.players)
                 {
                     lstPlayers.Items.Add(player);
                 }
-                txtAdmin.Text = $"Admin: {players[0]}";
+                txtAdmin.Text = $"Admin: {response.players[0]}";
             }
             catch (Exception ex)
             {
