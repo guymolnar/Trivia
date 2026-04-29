@@ -1,7 +1,7 @@
 using System.Windows;
 using TriviaClient.Models;
 using TriviaClient.Networking;
-using static TriviaClient.Models.RequestCodes;
+using static TriviaClient.Models.Codes;
 
 namespace TriviaClient
 {

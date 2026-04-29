@@ -189,6 +189,9 @@ void Communicator::broadcast(const std::vector<std::string>& usernames, const st
 			if (user->getUsername() == name)
 			{
 				send(sock, reinterpret_cast<const char*>(message.data()), message.size(), 0);
+				IRequestHandler* old = handler;
+				handler = m_handlerFactory.createMenuRequestHandler(*user);
+				delete old;
 				break;
 			}
 		}

@@ -36,6 +36,10 @@ RequestResult RoomMemberRequestHandler::leaveRoom(const RequestInfo& requestInfo
             throw std::exception("Room not found");
         }
         room->removeUser(m_user);
+        if (room->getAllUsers().empty())
+        {
+            m_roomManager.deleteRoom(m_roomId);
+        }
         LeaveRoomResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user)};
     }
