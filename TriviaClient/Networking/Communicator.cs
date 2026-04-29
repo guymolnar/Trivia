@@ -58,6 +58,7 @@ namespace TriviaClient.Networking
             {
                 bytesRead += _stream!.Read(body, bytesRead, length - bytesRead);
             }
+            System.Windows.MessageBox.Show($"Code: {code}\n{Encoding.UTF8.GetString(body)}", "Server Response");
             return (code, Encoding.UTF8.GetString(body));
         }
     }

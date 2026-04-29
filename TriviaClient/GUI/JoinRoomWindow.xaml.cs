@@ -68,6 +68,7 @@ namespace TriviaClient
                 }
                 RoomLobbyWindow lobby = new RoomLobbyWindow(_username, _roomNames[roomId], roomId);
                 lobby.Show();
+                this.Close();
             }
             catch (Exception ex)
             {

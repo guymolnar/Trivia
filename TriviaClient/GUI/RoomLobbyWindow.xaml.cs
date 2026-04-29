@@ -8,7 +8,6 @@ namespace TriviaClient
     public partial class RoomLobbyWindow : Window
     {
         private string _username;
-
         public RoomLobbyWindow(string username, string roomName, int roomId)
         {
             InitializeComponent();
@@ -34,7 +33,9 @@ namespace TriviaClient
                     lstPlayers.Items.Add("No players yet.");
                     return;
                 }
-
+                btnCloseRoom.Visibility = (response.players[0] == _username) ? Visibility.Visible : Visibility.Collapsed;
+                btnStartGame.Visibility = (response.players[0] == _username) ? Visibility.Visible : Visibility.Collapsed;
+                btnLeave.Visibility = (response.players[0] == _username) ? Visibility.Collapsed : Visibility.Visible;
                 foreach (var player in response.players)
                 {
                     lstPlayers.Items.Add(player);
