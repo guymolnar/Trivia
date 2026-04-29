@@ -220,5 +220,22 @@ namespace TriviaClient
                 StartRefreshing();
             }
         }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            StopRefreshing();
+            try
+            {
+                if (_isAdmin)
+                {
+                    Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
+                }
+                else
+                {
+                    Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
+                }
+                Communicator.Instance.ReceiveResponse();
+            }
+            catch { }
+        }
     }
 }
