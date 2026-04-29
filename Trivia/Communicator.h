@@ -9,6 +9,10 @@
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
 
+#define CODE_SIZE 1
+#define LENGTH_SIZE 4
+#define MAX_MESSAGE_SIZE 4096
+
 class Communicator {
 public:
 	static Communicator& getInstance(RequestHandlerFactory& handlerFactory)
