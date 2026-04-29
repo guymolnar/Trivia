@@ -30,7 +30,10 @@ bool SqliteDataBase::close()
 {
     if (m_db)
     {
-        sqlite3_close(m_db);
+        if (sqlite3_close(m_db) != SQLITE_OK)
+        {
+            return false;
+        }
         m_db = nullptr;
     }
     return true;
