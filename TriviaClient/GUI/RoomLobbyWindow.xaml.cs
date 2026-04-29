@@ -11,8 +11,8 @@ namespace TriviaClient
         private string _username;
         private bool _isAdmin;
         private int _roomId;
-        private Thread? _listenerThread;
-        private volatile bool _listening = false;
+        private Thread? _refreshingThread;
+        private bool _refreshing = false;
 
         public RoomLobbyWindow(string username, string roomName, int roomId)
         {
@@ -59,24 +59,28 @@ namespace TriviaClient
             {
                 lstPlayers.Items.Add(ex.Message);
             }
-            if (!_isAdmin)
-            {
-                StartListening();
-            }
+
+            StartRefreshing();
         }
 
-        private void StartListening()
+        private void StartRefreshing()
         {
-            _listening = true;
-            _listenerThread = new Thread(() =>
+            _refreshing = true;
+            _refreshingThread = new Thread(() =>
             {
-                try
+                while (_refreshing)
                 {
-                    while (_listening)
+                    Thread.Sleep(3000);
+                    if (!_refreshing) break;
+                    try
                     {
+                        Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest 
+                        { 
+                            roomId = _roomId 
+                        });
                         var (code, json) = Communicator.Instance.ReceiveResponse();
 
-                        if (code == LEAVE_ROOM_RESPONSE_CODE)
+                        if (code == 113) 
                         {
                             Dispatcher.Invoke(() =>
                             {
@@ -85,32 +89,60 @@ namespace TriviaClient
                                 hub.Show();
                                 this.Close();
                             });
-                            break;
+                            return;
                         }
-                        else if (code == START_GAME_RESPONSE_CODE)
+
+                        var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
+
+                        if (code == 100 || response.status == 0)
                         {
                             Dispatcher.Invoke(() =>
                             {
-                                
+                                MessageBox.Show("The room was closed.", "Room Closed");
+                                HubWindow hub = new HubWindow(_username);
+                                hub.Show();
+                                this.Close();
                             });
-                            break;
+                            return;
                         }
+
+                        if (response.hasGameBegan)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                // TODO: open game window
+                            });
+                            return;
+                        }
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            lstPlayers.Items.Clear();
+                            if (response.players != null)
+                            {
+                                foreach (var player in response.players)
+                                { 
+                                    lstPlayers.Items.Add(player); 
+                                }
+                            }
+                        });
                     }
+                    catch { }
                 }
-                catch { }
             });
-            _listenerThread.IsBackground = true;
-            _listenerThread.Start();
+            _refreshingThread.IsBackground = true;
+            _refreshingThread.Start();
         }
 
-        private void StopListening()
+        private void StopRefreshing()
         {
-            _listening = false;
+            _refreshing = false;
+            _refreshingThread?.Join();
         }
 
         private void btnLeave_Click(object sender, RoutedEventArgs e)
         {
-            StopListening();
+            StopRefreshing();
             try
             {
                 Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
@@ -120,14 +152,14 @@ namespace TriviaClient
                 if (code == 100 || response.status == 0)
                 {
                     MessageBox.Show("Could not leave room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    StartListening();
+                    StartRefreshing();
                     return;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StartListening();
+                StartRefreshing();
                 return;
             }
 
@@ -138,7 +170,7 @@ namespace TriviaClient
 
         private void btnCloseRoom_Click(object sender, RoutedEventArgs e)
         {
-            StopListening();
+            StopRefreshing();
             try
             {
                 Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
@@ -148,14 +180,14 @@ namespace TriviaClient
                 if (code == 100 || response.status == 0)
                 {
                     MessageBox.Show("Could not close room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    StartListening();
+                    StartRefreshing();
                     return;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StartListening();
+                StartRefreshing();
                 return;
             }
 
@@ -166,7 +198,7 @@ namespace TriviaClient
 
         private void btnStartGame_Click(object sender, RoutedEventArgs e)
         {
-            StopListening();
+            StopRefreshing();
             try
             {
                 Communicator.Instance.SendRequest(START_GAME_REQUEST_CODE, new StartGameRequest { roomId = _roomId });
@@ -176,7 +208,7 @@ namespace TriviaClient
                 if (code == 100 || response.status == 0)
                 {
                     MessageBox.Show("Could not start game.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    StartListening();
+                    StartRefreshing();
                     return;
                 }
 
@@ -185,8 +217,25 @@ namespace TriviaClient
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StartListening();
+                StartRefreshing();
             }
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            StopRefreshing();
+            try
+            {
+                if (_isAdmin)
+                {
+                    Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
+                }
+                else
+                {
+                    Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
+                }
+                Communicator.Instance.ReceiveResponse();
+            }
+            catch { }
         }
     }
 }
