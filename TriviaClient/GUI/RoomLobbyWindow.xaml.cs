@@ -65,7 +65,7 @@ namespace TriviaClient
             {
                 while (_refreshing)
                 {
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                     if (!_refreshing) break;
                     lock (_socketLock)
                     {
