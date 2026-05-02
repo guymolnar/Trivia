@@ -6,7 +6,7 @@
 enum RoomStatus
 {
 	INACTIVE,
-	ACTIVE
+	ACTIVE,
 };
 
 struct RoomData {

@@ -9,6 +9,10 @@
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
 
+#define CODE_SIZE 1
+#define LENGTH_SIZE 4
+#define MAX_MESSAGE_SIZE 4096
+
 class Communicator {
 public:
 	static Communicator& getInstance(RequestHandlerFactory& handlerFactory)
@@ -21,7 +25,6 @@ public:
 	void operator=(const Communicator&) = delete;
 	~Communicator();
 	void startHandleRequests();
-	void broadcast(const std::vector<std::string>& usernames, const std::vector<uint8_t>& message);
 private:
 	Communicator(RequestHandlerFactory& handlerFactory);
 	SOCKET m_serverSocket;

@@ -10,7 +10,7 @@ LoginManager::~LoginManager()
 
 }
 
-void LoginManager::signup(std::string name, std::string password, std::string mail, std::string address, std::string phone, std::string birthday) 
+void LoginManager::signup(const std::string& name, const std::string& password, const std::string& mail, const std::string& address, const std::string& phone, const std::string& birthday)
 {
     if (m_database->doesUserExist(name))
     {
@@ -19,7 +19,7 @@ void LoginManager::signup(std::string name, std::string password, std::string ma
     m_database->addNewUser(name, password, mail, address, phone, birthday);
 }
 
-void LoginManager::login(std::string name, std::string password)
+void LoginManager::login(const std::string& name, const std::string& password)
 {
     for (auto& user : m_loggedUsers)
     {
@@ -39,7 +39,7 @@ void LoginManager::login(std::string name, std::string password)
     m_loggedUsers.push_back(LoggedUser(name));
 }
 
-void LoginManager::logout(std::string name)
+void LoginManager::logout(const std::string& name)
 {
     if (!m_database->doesUserExist(name))
     {

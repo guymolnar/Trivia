@@ -56,9 +56,14 @@ namespace TriviaClient
 
                 Dispatcher.Invoke(() =>
                 {
+                    int selectedIndex = lstRooms.SelectedIndex;
                     lstRooms.Items.Clear();
                     foreach (var name in newNames)
                         lstRooms.Items.Add(name);
+                    if (selectedIndex >= 0 && selectedIndex < lstRooms.Items.Count)
+                    { 
+                        lstRooms.SelectedIndex = selectedIndex; 
+                    }
                     txtError.Text = newNames.Count == 0 ? "No rooms available." : "";
                 });
             }
@@ -75,7 +80,7 @@ namespace TriviaClient
             {
                 while (_refreshing)
                 {
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                     if (!_refreshing) break;
                     LoadRooms();
                 }

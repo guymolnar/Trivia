@@ -1,11 +1,11 @@
 #include "StatisticsManager.h"
 
-std::vector<std::string> StatisticsManager::getHighScore()
+std::vector<std::string> StatisticsManager::getHighScore() const
 {
 	return SqliteDataBase::getInstance().getHighScores();
 }
 
-std::vector<std::string> StatisticsManager::getUserStatistics(std::string username)
+std::vector<std::string> StatisticsManager::getUserStatistics(const std::string& username) const
 {
     IDatabase& db = SqliteDataBase::getInstance();
 

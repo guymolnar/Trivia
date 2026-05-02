@@ -1,33 +1,31 @@
 #include "JsonRequestPacketDeserializer.h"
 
-LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(std::vector<uint8_t> buffer)
+LoginRequest JsonRequestPacketDeserializer::deserializeLoginRequest(const std::vector<uint8_t>& buffer)
 {
-	json j = json::parse(buffer.begin(), buffer.end());
-
-	return LoginRequest{ j.at("username"), j.at("password") };
+	json requestJson = json::parse(buffer.begin(), buffer.end());
+	return LoginRequest{ requestJson.at("username"), requestJson.at("password") };
 }
 
-SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(std::vector<uint8_t> buffer)
+SignupRequest JsonRequestPacketDeserializer::deserializeSignupRequest(const std::vector<uint8_t>& buffer)
 {
-	json j = json::parse(buffer.begin(), buffer.end());
-
-	return SignupRequest{ j.at("username"), j.at("password"), j.at("mail"), j.at("address"), j.at("phone"), j.at("birthday") };
+	json requestJson = json::parse(buffer.begin(), buffer.end());
+	return SignupRequest{ requestJson.at("username"), requestJson.at("password"), requestJson.at("mail"), requestJson.at("address"), requestJson.at("phone"), requestJson.at("birthday") };
 }
 
-GetPlayersInRoomRequest JsonRequestPacketDeserializer::deserializeGetPlayersRequest(std::vector<uint8_t> buffer)
+GetPlayersInRoomRequest JsonRequestPacketDeserializer::deserializeGetPlayersRequest(const std::vector<uint8_t>& buffer)
 {
-	json j = json::parse(buffer.begin(), buffer.end());
-	return GetPlayersInRoomRequest{ j.at("roomId") };
+	json requestJson = json::parse(buffer.begin(), buffer.end());
+	return GetPlayersInRoomRequest{ requestJson.at("roomId") };
 }
 
-JoinRoomRequest JsonRequestPacketDeserializer::deserializeJoinRoomRequest(std::vector<uint8_t> buffer)
+JoinRoomRequest JsonRequestPacketDeserializer::deserializeJoinRoomRequest(const std::vector<uint8_t>& buffer)
 {
-	json j = json::parse(buffer.begin(), buffer.end());
-	return JoinRoomRequest{ j.at("roomId") };
+	json requestJson = json::parse(buffer.begin(), buffer.end());
+	return JoinRoomRequest{ requestJson.at("roomId") };
 }
 
-CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(std::vector<uint8_t> buffer)
+CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(const std::vector<uint8_t>& buffer)
 {
-	json j = json::parse(buffer.begin(), buffer.end());
-	return CreateRoomRequest{ j.at("roomName"), j.at("maxUsers"), j.at("questionsCount"), j.at("answersTimeout") };
+	json requestJson = json::parse(buffer.begin(), buffer.end());
+	return CreateRoomRequest{ requestJson.at("roomName"), requestJson.at("maxUsers"), requestJson.at("questionsCount"), requestJson.at("answersTimeout") };
 }

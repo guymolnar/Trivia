@@ -17,17 +17,18 @@ public:
     ~SqliteDataBase();
     bool open() override;
     bool close() override;
-    int doesUserExist(std::string username) override;
-    int doesPasswordMatch(std::string username, std::string password) override;
-    int addNewUser(std::string username, std::string password, std::string email, std::string address, std::string phone, std::string birthday) override;
+    int doesUserExist(const std::string& username) override;
+    int doesPasswordMatch(const std::string& username, const std::string& password) override;
+    int addNewUser(const std::string& username, const std::string& password, const std::string& email, const std::string& address, const std::string& phone, const std::string& birthday) override;
     std::vector<Question> getQuestions(int numOfQuestions) override;
-    float getPlayerAverageAnswerTime(std::string username) override;
-    int getNumOfCorrectAnswers(std::string username) override;
-    int getNumOfTotalAnswers(std::string username) override;
-    int getNumOfPlayerGames(std::string username) override;
-    int getPlayerScore(std::string username) override;
+    float getPlayerAverageAnswerTime(const std::string& username) override;
+    int getNumOfCorrectAnswers(const std::string& username) override;
+    int getNumOfTotalAnswers(const std::string& username) override;
+    int getNumOfPlayerGames(const std::string& username) override;
+    int getPlayerScore(const std::string& username) override;
     std::vector<std::string> getHighScores() override;
 private:
     SqliteDataBase();
     sqlite3* m_db;
+    const char* DB_NAME = "trivia.db";
 };

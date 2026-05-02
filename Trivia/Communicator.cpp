@@ -139,21 +139,21 @@ bool Communicator::recvAll(SOCKET s, char* buffer, int length)
 bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 {
 	uint8_t code;
-	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), 1))
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), CODE_SIZE))
 	{
 		return false;
 	}
-	uint8_t lenBytes[4];
-	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), 4))
+	uint8_t lenBytes[LENGTH_SIZE];
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), LENGTH_SIZE))
 	{
 		return false;
 	}
 
 	uint32_t jsonLen;
-	memcpy(&jsonLen, lenBytes, 4);
+	memcpy(&jsonLen, lenBytes, LENGTH_SIZE);
 	jsonLen = ntohl(jsonLen);
 
-	if (jsonLen > 4096)
+	if (jsonLen > MAX_MESSAGE_SIZE)
 	{
 		return false;
 	}
@@ -168,29 +168,4 @@ bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 	requestInfo.receivalTime = time(nullptr);
 	requestInfo.buffer = payload;
 	return true;
-}
-
-void Communicator::broadcast(const std::vector<std::string>& usernames, const std::vector<uint8_t>& message)
-{
-	std::lock_guard<std::mutex> lock(m_clientsMutex);
-	for (auto& [sock, handler] : m_clients)
-	{
-		if (!handler) 
-		{
-			continue;
-		}
-		LoggedUser* user = handler->getLoggedUser();
-		if (!user) 
-		{
-			continue;
-		}
-		for (const auto& name : usernames)
-		{
-			if (user->getUsername() == name)
-			{
-				send(sock, reinterpret_cast<const char*>(message.data()), message.size(), 0);
-				break;
-			}
-		}
-	}
 }

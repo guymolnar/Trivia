@@ -13,6 +13,8 @@ namespace TriviaClient
         private int _roomId;
         private Thread? _refreshingThread;
         private bool _refreshing = false;
+        private readonly object _socketLock = new object();
+        private bool _closedByButton = false;
 
         public RoomLobbyWindow(string username, string roomName, int roomId)
         {
@@ -23,10 +25,7 @@ namespace TriviaClient
 
             try
             {
-                Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest
-                {
-                    roomId = roomId,
-                });
+                Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest { roomId = roomId });
                 var (code, json) = Communicator.Instance.ReceiveResponse();
 
                 if (code == 100)
@@ -45,15 +44,11 @@ namespace TriviaClient
                 foreach (var player in response.players)
                     lstPlayers.Items.Add(player);
 
-                if (response.players.Count > 0)
-                {
-                    txtAdmin.Text = $"Admin: {response.players[0]}";
-                    bool isAdmin = response.players[0] == _username;
-                    _isAdmin = isAdmin;
-                    btnCloseRoom.Visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
-                    btnStartGame.Visibility = isAdmin ? Visibility.Visible : Visibility.Collapsed;
-                    btnLeave.Visibility = isAdmin ? Visibility.Collapsed : Visibility.Visible;
-                }
+                txtAdmin.Text = $"Admin: {response.players[0]}";
+                _isAdmin = response.players[0] == _username;
+                btnCloseRoom.Visibility = _isAdmin ? Visibility.Visible : Visibility.Collapsed;
+                btnStartGame.Visibility = _isAdmin ? Visibility.Visible : Visibility.Collapsed;
+                btnLeave.Visibility = _isAdmin ? Visibility.Collapsed : Visibility.Visible;
             }
             catch (Exception ex)
             {
@@ -70,64 +65,48 @@ namespace TriviaClient
             {
                 while (_refreshing)
                 {
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
                     if (!_refreshing) break;
-                    try
+                    lock (_socketLock)
                     {
-                        Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest 
-                        { 
-                            roomId = _roomId 
-                        });
-                        var (code, json) = Communicator.Instance.ReceiveResponse();
-
-                        if (code == 113) 
+                        try
                         {
-                            Dispatcher.Invoke(() =>
+                            Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest { roomId = _roomId });
+                            var (code, json) = Communicator.Instance.ReceiveResponse();
+
+                            var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
+
+                            if (code == 100 || response.status == 0)
                             {
-                                MessageBox.Show("The room was closed by the admin.", "Room Closed");
-                                HubWindow hub = new HubWindow(_username);
-                                hub.Show();
-                                this.Close();
-                            });
-                            return;
-                        }
+                                Dispatcher.Invoke(() =>
+                                {
+                                    MessageBox.Show("The room was closed.", "Room Closed");
+                                    HubWindow hub = new HubWindow(_username);
+                                    hub.Show();
+                                    _closedByButton = true;
+                                    this.Close();
+                                });
+                                return;
+                            }
 
-                        var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
-
-                        if (code == 100 || response.status == 0)
-                        {
-                            Dispatcher.Invoke(() =>
-                            {
-                                MessageBox.Show("The room was closed.", "Room Closed");
-                                HubWindow hub = new HubWindow(_username);
-                                hub.Show();
-                                this.Close();
-                            });
-                            return;
-                        }
-
-                        if (response.hasGameBegan)
-                        {
-                            Dispatcher.Invoke(() =>
+                            if (response.hasGameBegan)
                             {
                                 // TODO: open game window
-                            });
-                            return;
-                        }
-
-                        Dispatcher.Invoke(() =>
-                        {
-                            lstPlayers.Items.Clear();
-                            if (response.players != null)
-                            {
-                                foreach (var player in response.players)
-                                { 
-                                    lstPlayers.Items.Add(player); 
-                                }
+                                return;
                             }
-                        });
+
+                            Dispatcher.Invoke(() =>
+                            {
+                                lstPlayers.Items.Clear();
+                                if (response.players != null)
+                                {
+                                    foreach (var player in response.players)
+                                        lstPlayers.Items.Add(player);
+                                }
+                            });
+                        }
+                        catch { }
                     }
-                    catch { }
                 }
             });
             _refreshingThread.IsBackground = true;
@@ -137,105 +116,116 @@ namespace TriviaClient
         private void StopRefreshing()
         {
             _refreshing = false;
-            _refreshingThread?.Join();
         }
 
         private void btnLeave_Click(object sender, RoutedEventArgs e)
         {
             StopRefreshing();
-            try
+            lock (_socketLock)
             {
-                Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
-                var (code, json) = Communicator.Instance.ReceiveResponse();
-                var response = JsonDeserializer.Deserialize<LeaveRoomResponse>(json);
-
-                if (code == 100 || response.status == 0)
+                try
                 {
-                    MessageBox.Show("Could not leave room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    var response = JsonDeserializer.Deserialize<LeaveRoomResponse>(json);
+
+                    if (code == 100 || response.status == 0)
+                    {
+                        MessageBox.Show("Could not leave room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        StartRefreshing();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     StartRefreshing();
                     return;
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StartRefreshing();
-                return;
-            }
 
             HubWindow hub = new HubWindow(_username);
             hub.Show();
+            _closedByButton = true;
             this.Close();
         }
 
         private void btnCloseRoom_Click(object sender, RoutedEventArgs e)
         {
             StopRefreshing();
-            try
+            lock (_socketLock)
             {
-                Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
-                var (code, json) = Communicator.Instance.ReceiveResponse();
-                var response = JsonDeserializer.Deserialize<CloseRoomResponse>(json);
-
-                if (code == 100 || response.status == 0)
+                try
                 {
-                    MessageBox.Show("Could not close room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    var response = JsonDeserializer.Deserialize<CloseRoomResponse>(json);
+
+                    if (code == 100 || response.status == 0)
+                    {
+                        MessageBox.Show("Could not close room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        StartRefreshing();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     StartRefreshing();
                     return;
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StartRefreshing();
-                return;
-            }
 
             HubWindow hub = new HubWindow(_username);
             hub.Show();
+            _closedByButton = true;
             this.Close();
         }
 
         private void btnStartGame_Click(object sender, RoutedEventArgs e)
         {
             StopRefreshing();
-            try
+            lock (_socketLock)
             {
-                Communicator.Instance.SendRequest(START_GAME_REQUEST_CODE, new StartGameRequest { roomId = _roomId });
-                var (code, json) = Communicator.Instance.ReceiveResponse();
-                var response = JsonDeserializer.Deserialize<StartGameResponse>(json);
-
-                if (code == 100 || response.status == 0)
+                try
                 {
-                    MessageBox.Show("Could not start game.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    StartRefreshing();
-                    return;
-                }
+                    Communicator.Instance.SendRequest(START_GAME_REQUEST_CODE, new StartGameRequest { roomId = _roomId });
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    var response = JsonDeserializer.Deserialize<StartGameResponse>(json);
 
-                // TODO: open game window
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                StartRefreshing();
+                    if (code == 100 || response.status == 0)
+                    {
+                        MessageBox.Show("Could not start game.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        StartRefreshing();
+                        return;
+                    }
+
+                    // TODO: open game window
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    StartRefreshing();
+                }
             }
         }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             StopRefreshing();
-            try
+            if (_closedByButton) return;
+            lock (_socketLock)
             {
-                if (_isAdmin)
+                try
                 {
-                    Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
+                    if (_isAdmin)
+                        Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
+                    else
+                        Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
+                    Communicator.Instance.ReceiveResponse();
                 }
-                else
-                {
-                    Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
-                }
-                Communicator.Instance.ReceiveResponse();
+                catch { }
             }
-            catch { }
         }
     }
 }
