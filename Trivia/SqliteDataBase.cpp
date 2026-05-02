@@ -11,7 +11,7 @@ SqliteDataBase::~SqliteDataBase()
 
 bool SqliteDataBase::open()
 {
-    if (sqlite3_open("trivia.db", &m_db) != SQLITE_OK)
+    if (sqlite3_open(DB_NAME, &m_db) != SQLITE_OK)
     {
         return false;
     }

@@ -30,4 +30,5 @@ public:
 private:
     SqliteDataBase();
     sqlite3* m_db;
+    const char* DB_NAME = "trivia.db";
 };
