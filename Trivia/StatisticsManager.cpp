@@ -5,7 +5,7 @@ std::vector<std::string> StatisticsManager::getHighScore() const
 	return SqliteDataBase::getInstance().getHighScores();
 }
 
-std::vector<std::string> StatisticsManager::getUserStatistics(std::string username) const
+std::vector<std::string> StatisticsManager::getUserStatistics(const std::string& username) const
 {
     IDatabase& db = SqliteDataBase::getInstance();
 

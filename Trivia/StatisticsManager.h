@@ -17,7 +17,7 @@ public:
 
 	~StatisticsManager() = default;
 	std::vector<std::string> getHighScore() const;
-	std::vector<std::string> getUserStatistics(std::string username) const;
+	std::vector<std::string> getUserStatistics(const std::string& username) const;
 private:
     StatisticsManager() = default;
 	//Database is a singleton so no m_database
