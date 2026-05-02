@@ -16,8 +16,8 @@ public:
     void operator=(const StatisticsManager&) = delete;
 
 	~StatisticsManager() = default;
-	std::vector<std::string> getHighScore();
-	std::vector<std::string> getUserStatistics(std::string username);
+	std::vector<std::string> getHighScore() const;
+	std::vector<std::string> getUserStatistics(std::string username) const;
 private:
     StatisticsManager() = default;
 	//Database is a singleton so no m_database
