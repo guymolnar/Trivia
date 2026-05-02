@@ -5,7 +5,7 @@ MenuRequestHandler::MenuRequestHandler(RequestHandlerFactory& handlerFactory, Lo
 {
 }
 
-bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
+bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
     return requestInfo.id == LOGOUT_REQUEST_CODE ||
         requestInfo.id == GET_ROOMS_REQUEST_CODE ||
