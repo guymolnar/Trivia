@@ -8,7 +8,7 @@ class RoomAdminRequestHandler : public RoomRequestHandler
 public:
 	RoomAdminRequestHandler(RequestHandlerFactory& handlerFactory, LoggedUser user, unsigned int roomId);
 	~RoomAdminRequestHandler() = default;
-	bool isRequestRelevant(const RequestInfo& requestInfo) override;
+	bool isRequestRelevant(const RequestInfo& requestInfo) const override;
 	RequestResult handleRequest(const RequestInfo& requestInfo) override;
 	
 private:

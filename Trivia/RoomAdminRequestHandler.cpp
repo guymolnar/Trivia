@@ -6,7 +6,7 @@ RoomAdminRequestHandler::RoomAdminRequestHandler(RequestHandlerFactory& handlerF
 {
 }
 
-bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
+bool RoomAdminRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
     return requestInfo.id == CLOSE_ROOM_REQUEST_CODE ||
         requestInfo.id == START_GAME_REQUEST_CODE || requestInfo.id == GET_ROOM_STATE_REQUEST_CODE;
