@@ -26,7 +26,7 @@ RequestResult RoomRequestHandler::getRoomState(const RequestInfo& requestInfo)
         }
         RoomData meta = room->getRoomMetadata();
         std::vector<std::string> players = room->getAllUsers();
-        GetRoomStateResponse response{ 1, meta.status, players, meta.numOfQuestions, meta.timePerQuestions };
+        GetRoomStateResponse response{1, meta.status, players, meta.numOfQuestions, meta.timePerQuestions };
         return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }
     catch (const std::exception& e)

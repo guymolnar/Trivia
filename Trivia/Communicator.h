@@ -25,7 +25,6 @@ public:
 	void operator=(const Communicator&) = delete;
 	~Communicator();
 	void startHandleRequests();
-	void broadcast(const std::vector<std::string>& usernames, const std::vector<uint8_t>& message);
 private:
 	Communicator(RequestHandlerFactory& handlerFactory);
 	SOCKET m_serverSocket;

@@ -44,8 +44,6 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
         std::vector<std::string> members = room->getAllUsers();
         members.erase(std::remove(members.begin(), members.end(), m_user.getUsername()), members.end());
         LeaveRoomResponse leaveResponse{ 1 };
-        Communicator::getInstance(m_handlerFactory).broadcast(members, JsonResponsePacketSerializer::serializeResponse(leaveResponse));
-
         m_roomManager.deleteRoom(m_roomId);
         CloseRoomResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user) };
@@ -69,7 +67,6 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
         std::vector<std::string> members = room->getAllUsers();
         members.erase(std::remove(members.begin(), members.end(), m_user.getUsername()), members.end());
         StartGameResponse startResponse{ 1 };
-        Communicator::getInstance(m_handlerFactory).broadcast(members, JsonResponsePacketSerializer::serializeResponse(startResponse));
 
         room->setStatus(RoomStatus::ACTIVE);
         StartGameResponse response{ 1 };

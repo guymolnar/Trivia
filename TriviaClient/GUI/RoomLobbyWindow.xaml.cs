@@ -74,19 +74,6 @@ namespace TriviaClient
                             Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest { roomId = _roomId });
                             var (code, json) = Communicator.Instance.ReceiveResponse();
 
-                            if (code == 113)
-                            {
-                                Dispatcher.Invoke(() =>
-                                {
-                                    MessageBox.Show("The room was closed by the admin.", "Room Closed");
-                                    HubWindow hub = new HubWindow(_username);
-                                    hub.Show();
-                                    _closedByButton = true;
-                                    this.Close();
-                                });
-                                return;
-                            }
-
                             var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
 
                             if (code == 100 || response.status == 0)
