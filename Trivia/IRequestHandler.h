@@ -12,6 +12,11 @@
 #define CREATE_ROOM_RESPONSE_CODE 107
 #define GET_HIGHSCORE_RESPONSE_CODE 108
 #define GET_PERSONAL_STATS_RESPONSE_CODE 109
+#define CLOSE_ROOM_RESPONSE_CODE 110
+#define START_GAME_RESPONSE_CODE 111
+#define GET_ROOM_STATE_RESPONSE_CODE 112
+#define LEAVE_ROOM_RESPONSE_CODE 113
+
 
 #define ERROR_REQUEST_CODE  200
 #define LOGIN_REQUEST_CODE  201
@@ -23,6 +28,10 @@
 #define LOGOUT_REQUEST_CODE 207
 #define GET_ROOMS_REQUEST_CODE 208
 #define PERSONAL_STATS_REQUEST_CODE 209
+#define CLOSE_ROOM_REQUEST_CODE 210
+#define START_GAME_REQUEST_CODE 211
+#define GET_ROOM_STATE_REQUEST_CODE 212
+#define LEAVE_ROOM_REQUEST_CODE 213
 
 class IRequestHandler;
 struct RequestInfo {
@@ -39,7 +48,7 @@ struct RequestResult {
 class IRequestHandler {
 public:
 	virtual ~IRequestHandler() = default;
-	virtual bool isRequestRelevant(const RequestInfo& requestInfo) = 0;
+	virtual bool isRequestRelevant(const RequestInfo& requestInfo) const = 0;
 	virtual RequestResult handleRequest(const RequestInfo& requestInfo) = 0;
 	virtual LoggedUser* getLoggedUser() { return nullptr; }
 };

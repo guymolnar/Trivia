@@ -5,51 +5,9 @@
 #include <winsock2.h>
 #include "IRequestHandler.h"
 #include "Room.h"
+#include "Responses.h"
 
 using json = nlohmann::json;
-struct LoginResponse {
-	unsigned int status;
-};
-
-struct SignupResponse {
-	unsigned int status;
-};
-
-struct ErrorResponse {
-	std::string message;
-};
-
-struct LogoutResponse {
-	unsigned int status;
-};
-
-struct GetRoomsResponse {
-	unsigned int status;
-	std::vector<RoomData> rooms;
-};
-
-struct GetPlayersInRoomResponse {
-	std::vector<std::string> players;
-};
-
-struct GetHighScoreResponse {
-	unsigned int status;
-	std::vector<std::string> statistics;
-};
-
-struct GetPersonalStatsResponse {
-	unsigned int status;
-	std::vector<std::string> statistics;
-};
-
-struct JoinRoomResponse {
-	unsigned int status;
-};
-
-struct CreateRoomResponse {
-	unsigned int status;
-	unsigned int roomId;
-};
 
 class JsonResponsePacketSerializer {
 public:
@@ -63,6 +21,10 @@ public:
 	static std::vector<uint8_t> serializeResponse(const CreateRoomResponse& response);
 	static std::vector<uint8_t> serializeResponse(const GetHighScoreResponse& response);
 	static std::vector<uint8_t> serializeResponse(const GetPersonalStatsResponse& response);
+	static std::vector<uint8_t> serializeResponse(const CloseRoomResponse& response);
+	static std::vector<uint8_t> serializeResponse(const StartGameResponse& response);
+	static std::vector<uint8_t> serializeResponse(const GetRoomStateResponse& response);
+	static std::vector<uint8_t> serializeResponse(const LeaveRoomResponse& response);
 private:
 	static std::vector<uint8_t> buildPacket(const std::string& jsonStr, uint8_t code);
 };

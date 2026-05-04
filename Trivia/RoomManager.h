@@ -2,8 +2,6 @@
 #include <unordered_map>
 #include "Room.h"
 
-typedef int roomID;
-
 class RoomManager {
 public:
 	static RoomManager& getInstance()
@@ -14,13 +12,13 @@ public:
 	RoomManager(const RoomManager&) = delete;
 	void operator=(const RoomManager&) = delete;
 	unsigned int createRoom(LoggedUser roomAdmin, RoomData roomData);
-	void deleteRoom(roomID ID);
-	RoomStatus getRoomState(roomID ID);
+	void deleteRoom(unsigned int id);
+	RoomStatus getRoomState(unsigned int id);
 	std::vector<RoomData> getRooms();
-	Room* getRoom(roomID id);
+	Room* getRoom(unsigned int id);
 private:
 	RoomManager() = default;
-	std::unordered_map<roomID, Room> m_rooms;
+	std::unordered_map<unsigned int, Room> m_rooms;
 	unsigned int m_nextRoomId = 0;
 
 };

@@ -70,15 +70,16 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		RequestInfo requestInfo;
 		while (readMessage(clientSocket, requestInfo))
 		{
-			IRequestHandler* handler = m_clients[clientSocket];
-
-			if (!handler->isRequestRelevant(requestInfo))
+			IRequestHandler* handler;
 			{
-				continue;
+				std::lock_guard<std::mutex> lock(m_clientsMutex);
+				handler = m_clients[clientSocket];
 			}
 
-			RequestResult result = handler->handleRequest(requestInfo);
+			if (!handler->isRequestRelevant(requestInfo))
+				continue;
 
+			RequestResult result = handler->handleRequest(requestInfo);
 			send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
 
 			{
@@ -86,10 +87,9 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 				IRequestHandler* old = m_clients[clientSocket];
 				m_clients[clientSocket] = result.newHandler;
 				if (old != result.newHandler)
-				{
 					delete old;
-				}
 			}
+
 			if (!result.newHandler) break;
 		}
 
@@ -139,21 +139,21 @@ bool Communicator::recvAll(SOCKET s, char* buffer, int length)
 bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 {
 	uint8_t code;
-	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), 1))
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), CODE_SIZE))
 	{
 		return false;
 	}
-	uint8_t lenBytes[4];
-	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), 4))
+	uint8_t lenBytes[LENGTH_SIZE];
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), LENGTH_SIZE))
 	{
 		return false;
 	}
 
 	uint32_t jsonLen;
-	memcpy(&jsonLen, lenBytes, 4);
+	memcpy(&jsonLen, lenBytes, LENGTH_SIZE);
 	jsonLen = ntohl(jsonLen);
 
-	if (jsonLen > 4096)
+	if (jsonLen > MAX_MESSAGE_SIZE)
 	{
 		return false;
 	}

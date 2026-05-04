@@ -1,20 +1,20 @@
 #include "Question.h"
 
-Question::Question(std::string question, std::vector<std::string> possibleAnswers, int correctAnswerId) : m_question(question), m_possibleAnswers(possibleAnswers), m_correctAnswerId(correctAnswerId)
+Question::Question(const std::string& question, const  std::vector<std::string>& possibleAnswers, const int correctAnswerId) : m_question(question), m_possibleAnswers(possibleAnswers), m_correctAnswerId(correctAnswerId)
 {
 }
 
-std::string Question::getQuestion()
+std::string Question::getQuestion() const
 {
     return m_question;
 }
 
-std::vector<std::string> Question::getPossibleAnswers()
+std::vector<std::string> Question::getPossibleAnswers() const
 {
     return m_possibleAnswers;
 }
 
-int Question::getCorrectAnswerId()
+int Question::getCorrectAnswerId() const
 {
     return m_correctAnswerId;
 }

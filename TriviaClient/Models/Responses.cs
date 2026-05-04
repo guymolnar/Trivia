@@ -60,4 +60,28 @@ namespace TriviaClient.Models
         public int roomId;
     }
 
+    public class GetRoomStateResponse
+    {
+        public int status;
+        public bool hasGameBegan;
+        public List<string>? players;
+        public int questionCount;
+        public int answerTimeOut;
+    }
+
+    public class CloseRoomResponse
+    {
+        public int status;
+    }
+
+    public class StartGameResponse
+    {
+        public int status;
+    }
+
+    public class LeaveRoomResponse
+    {
+        public int status;
+    }
+
 }

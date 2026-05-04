@@ -7,7 +7,7 @@ LoginRequestHandler::LoginRequestHandler(RequestHandlerFactory& factory) : m_han
 }
 
 
-bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
+bool LoginRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
 	return (requestInfo.id == LOGIN_REQUEST_CODE || requestInfo.id == SIGNUP_REQUEST_CODE);
 }
@@ -37,7 +37,7 @@ RequestResult LoginRequestHandler::login(const RequestInfo& requestInfo)
 		result.newHandler = m_handlerFactory.createMenuRequestHandler(LoggedUser(req.username));
 		return result;
 	}
-	catch (const std::exception&)
+	catch (const std::exception& e)
 	{
 		LoginResponse response;
 		response.status = 0;
@@ -58,7 +58,7 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 		{
 			throw std::exception("Invalid password");
 		}
-		if (!isEmailValid(req.email))
+		if (!isEmailValid(req.mail))
 		{
 			throw std::exception("Invalid email");
 		}
@@ -76,7 +76,7 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 			throw std::exception("Invalid birthday");
 		}
 
-		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.email, req.address, req.phone, req.birthday);
+		m_handlerFactory.getLoginManager().signup(req.username, req.password, req.mail, req.address, req.phone, req.birthday);
 
 		SignupResponse response;
 		response.status = 1;
@@ -86,7 +86,7 @@ RequestResult LoginRequestHandler::signup(const RequestInfo& requestInfo)
 		result.newHandler = m_handlerFactory.createMenuRequestHandler(LoggedUser(req.username));
 		return result;
 	}
-	catch (const std::exception&)
+	catch (const std::exception& e)
 	{
 		SignupResponse response;
 		response.status = 0;
