@@ -114,3 +114,19 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const Leave
 	json responseJson = { {"status", response.status} };
 	return buildPacket(responseJson.dump(), LEAVE_ROOM_RESPONSE_CODE);
 }
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetGameResultsResponse& response)
+{
+	json resultsJson = json::array();
+	for (const auto& player : response.results)
+	{
+		resultsJson.push_back({
+			{"username", player.username},
+			{"correctAnswerCount", player.correctAnswerCount},
+			{"wrongAnswerCount", player.wrongAnswerCount},
+			{"averageAnswerTime", player.averageAnswerTime}
+			});
+	}
+	json responseJson = { {"status", response.status}, {"results", resultsJson}};
+	return buildPacket(responseJson.dump(), GET_GAME_RESULTS_RESPONSE_CODE);
+}
