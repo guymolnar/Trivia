@@ -25,6 +25,12 @@ public:
 	static std::vector<uint8_t> serializeResponse(const StartGameResponse& response);
 	static std::vector<uint8_t> serializeResponse(const GetRoomStateResponse& response);
 	static std::vector<uint8_t> serializeResponse(const LeaveRoomResponse& response);
+
+	static std::vector<uint8_t> serializeResponse(const GetGameResultsResponse& response);
+	static std::vector<uint8_t> serializeResponse(const SubmitAnswerResponse& response);
+	static std::vector<uint8_t> serializeResponse(const GetQuestionResponse& response);
+	static std::vector<uint8_t> serializeResponse(const LeaveGameResponse& response);
+
 private:
 	static std::vector<uint8_t> buildPacket(const std::string& jsonStr, uint8_t code);
 };
