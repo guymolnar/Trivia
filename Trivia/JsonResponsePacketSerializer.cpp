@@ -130,3 +130,9 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetGa
 	json responseJson = { {"status", response.status}, {"results", resultsJson}};
 	return buildPacket(responseJson.dump(), GET_GAME_RESULTS_RESPONSE_CODE);
 }
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const SubmitAnswerResponse& response)
+{
+	json responseJson = { {"status", response.status}, {"correctAnswerId", response.correctAnswerId} };
+	return buildPacket(responseJson.dump(), SUBMIT_ANSWER_RESPONSE_CODE);
+}
