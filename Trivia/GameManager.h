@@ -1,0 +1,26 @@
+#pragma once
+#include <vector>
+#include <string>
+#include "SqliteDataBase.h"
+#include "Game.h"
+
+class GameManager
+{
+public:
+    static GameManager& getInstance()
+    {
+        static GameManager instance;
+        return instance;
+    }
+
+    GameManager(const GameManager&) = delete;
+    void operator=(const GameManager&) = delete;
+
+    ~GameManager() = default;
+    Game createGame(const Room& room);
+    void deleteGame(unsigned int gameId);
+private:
+    GameManager() = default;
+    std::vector<Game> m_games;
+    //Database is a singleton so no m_database
+};
