@@ -41,3 +41,18 @@ RequestResult GameRequestHandler::handleRequest(const RequestInfo& requestInfo)
     ErrorResponse err{ "Request not relevant to GameRequestHandler" };
     return { JsonResponsePacketSerializer::serializeResponse(err), this };
 }
+
+RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo) const
+{
+    try
+    {
+        m_handlerFactory.get ().logout(m_user.getUsername());
+        LogoutResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
