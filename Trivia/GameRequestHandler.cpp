@@ -42,13 +42,19 @@ RequestResult GameRequestHandler::handleRequest(const RequestInfo& requestInfo)
     return { JsonResponsePacketSerializer::serializeResponse(err), this };
 }
 
-RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo) const
+RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo)
 {
     try
     {
-        m_handlerFactory.get ().logout(m_user.getUsername());
-        LogoutResponse response{ 1 };
-        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+        Question question = m_game.getQuestionForUser(m_user);
+        std::vector<std::string> answersList = question.getPossibleAnswers();
+        std::unordered_map<unsigned int, std::string> answersMap;
+        for (unsigned int i = 0; i < answersList.size(); i++)
+        {
+            answersMap[i + 1] = answersList[i];
+        }
+        GetQuestionResponse response{ 1, question.getQuestion(), answersMap };
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }
     catch (const std::exception& e)
     {
