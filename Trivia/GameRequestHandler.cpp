@@ -62,3 +62,23 @@ RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo)
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo)
+{
+    try
+    {
+        SubmitAnswerRequest request = JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(requestInfo.buffer);
+        m_game.submitAnswer(m_user, request.answerId);
+        Question question = m_game.getQuestionForUser(m_user);
+        SubmitAnswerResponse response;
+        response.status = 1;
+        response.correctAnswerId = question.getCorrectAnswerId();
+
+        return RequestResult{ JsonResponsePacketSerializer::serializeResponse(response), this};
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
