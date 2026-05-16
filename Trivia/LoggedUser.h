@@ -5,7 +5,7 @@ class LoggedUser {
 public:
 	LoggedUser(std::string username);
 	~LoggedUser() = default;
-	std::string getUsername();
+	std::string getUsername() const;
 private:
 	std::string m_username;
 };
