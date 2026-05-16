@@ -82,3 +82,22 @@ RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo)
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
+{
+    try
+    {
+        std::vector<PlayerResults> results;
+        for (const auto& [user, data] : m_game.getPlayers())
+        {
+            results.push_back({ user.getUsername(), data.correctAnswerCount, data.wrongAnswerCount, data.averageAnswerTime });
+        }
+        GetGameResultsResponse response{ 1, results };
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}

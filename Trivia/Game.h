@@ -19,6 +19,7 @@ public:
     Game(const std::vector<Question>& questions, const std::vector<LoggedUser>& players);
 
     Question getQuestionForUser(const LoggedUser& user);
+    std::unordered_map<LoggedUser, GameData> getPlayers();
     void submitAnswer(const LoggedUser& user, unsigned int answerId);
     void removePlayer(const LoggedUser& user);
     void sumitStatsToDB(const GameData& data);
