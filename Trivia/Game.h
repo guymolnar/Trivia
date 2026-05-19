@@ -4,6 +4,7 @@
 #include "Question.h"
 #include "LoggedUser.h"
 #include "Responses.h"
+#include "SqliteDataBase.h"
 
 struct GameData
 {
@@ -24,7 +25,7 @@ public:
     std::unordered_map<LoggedUser, GameData> getPlayers();
     void submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned int answerTime);
     void removePlayer(const LoggedUser& user);
-    void sumitStatsToDB(const GameData& data);
+    void submitStatsToDB(const GameData& data, const std::string& username);
 
 private:
     std::vector<Question> m_questions;

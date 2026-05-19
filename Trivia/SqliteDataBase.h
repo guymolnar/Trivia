@@ -27,6 +27,7 @@ public:
     int getNumOfPlayerGames(const std::string& username) override;
     int getPlayerScore(const std::string& username) override;
     std::vector<std::string> getHighScores() override;
+    int submitGameStatistics(const std::string& username, unsigned int correctAnswers, unsigned int wrongAnswers, unsigned int averageAnswerTime) override;
 private:
     SqliteDataBase();
     sqlite3* m_db;
