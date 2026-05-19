@@ -11,6 +11,8 @@ struct GameData
     unsigned int correctAnswerCount;
     unsigned int wrongAnswerCount;
     unsigned int averageAnswerTime;
+    unsigned int currentQuestionIndex;
+    unsigned int totalAnswerTime;
 };
 
 class Game
@@ -20,7 +22,7 @@ public:
 
     Question getQuestionForUser(const LoggedUser& user);
     std::unordered_map<LoggedUser, GameData> getPlayers();
-    void submitAnswer(const LoggedUser& user, unsigned int answerId);
+    void submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned int answerTime);
     void removePlayer(const LoggedUser& user);
     void sumitStatsToDB(const GameData& data);
 

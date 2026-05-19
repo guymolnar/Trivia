@@ -17,3 +17,27 @@ Question Game::getQuestionForUser(const LoggedUser& user)
 {
     return m_players[user].currentQuestion;
 }
+
+void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned int answerTime)
+{
+    GameData& data = m_players[user];
+
+    if (answerId == static_cast<unsigned int>(data.currentQuestion.getCorrectAnswerId()))
+    {
+        data.correctAnswerCount++;
+    }
+    else
+    {
+        data.wrongAnswerCount++;
+    }
+
+    data.totalAnswerTime += answerTime;
+    unsigned int totalAnswered = data.correctAnswerCount + data.wrongAnswerCount;
+    data.averageAnswerTime = data.totalAnswerTime / totalAnswered;
+
+    data.currentQuestionIndex++;
+    if (data.currentQuestionIndex < m_questions.size())
+    {
+        data.currentQuestion = m_questions[data.currentQuestionIndex];
+    }
+}
