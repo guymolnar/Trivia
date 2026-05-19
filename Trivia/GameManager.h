@@ -17,7 +17,7 @@ public:
     void operator=(const GameManager&) = delete;
 
     ~GameManager() = default;
-    Game createGame(const Room& room);
+    Game& createGame(Room& room);
     void deleteGame(unsigned int gameId);
 private:
     GameManager() = default;
