@@ -16,7 +16,7 @@ struct GameData
 class Game
 {
 public:
-    Game(const std::vector<Question>& questions, const std::vector<LoggedUser>& players);
+    Game(const std::vector<Question>& questions, const std::vector<LoggedUser>& players, unsigned int gameId);
 
     Question getQuestionForUser(const LoggedUser& user);
     std::unordered_map<LoggedUser, GameData> getPlayers();
