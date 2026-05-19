@@ -41,3 +41,7 @@ void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned 
         data.currentQuestion = m_questions[data.currentQuestionIndex];
     }
 }
+
+void Game::removePlayer(const LoggedUser& user)
+{
+}
