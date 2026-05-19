@@ -12,3 +12,8 @@ Game::Game(const std::vector<Question>& questions, const std::vector<LoggedUser>
         m_players[player] = data;
     }
 }
+
+Question Game::getQuestionForUser(const LoggedUser& user)
+{
+    return m_players[user].currentQuestion;
+}
