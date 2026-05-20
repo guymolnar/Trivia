@@ -64,13 +64,11 @@ RequestResult RoomAdminRequestHandler::startGame(const RequestInfo& requestInfo)
         {
             throw std::exception("Room not found");
         }
-        std::vector<std::string> members = room->getAllUsers();
-        members.erase(std::remove(members.begin(), members.end(), m_user.getUsername()), members.end());
-        StartGameResponse startResponse{ 1 };
 
+        Game& game = m_handlerFactory.getGameManager().createGame(*room);
         room->setStatus(RoomStatus::ACTIVE);
         StartGameResponse response{ 1 };
-        return { JsonResponsePacketSerializer::serializeResponse(response), nullptr };
+        return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createGameRequestHandler(m_user, game) };
     }
     catch (const std::exception& e)
     {

@@ -101,3 +101,18 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
         return { JsonResponsePacketSerializer::serializeResponse(err), this };
     }
 }
+
+RequestResult GameRequestHandler::leaveGame(const RequestInfo& requestInfo)
+{
+    try
+    {
+        m_game.removePlayer(m_user);
+        LeaveGameResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user) };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
