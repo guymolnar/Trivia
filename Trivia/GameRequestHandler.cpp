@@ -68,7 +68,7 @@ RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo)
     try
     {
         SubmitAnswerRequest request = JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(requestInfo.buffer);
-        m_game.submitAnswer(m_user, request.answerId);
+        m_game.submitAnswer(m_user, request.answerId, 0);
         Question question = m_game.getQuestionForUser(m_user);
         SubmitAnswerResponse response;
         response.status = 1;
@@ -94,6 +94,21 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
         }
         GetGameResultsResponse response{ 1, results };
         return { JsonResponsePacketSerializer::serializeResponse(response), this };
+    }
+    catch (const std::exception& e)
+    {
+        ErrorResponse err{ e.what() };
+        return { JsonResponsePacketSerializer::serializeResponse(err), this };
+    }
+}
+
+RequestResult GameRequestHandler::leaveGame(const RequestInfo& requestInfo)
+{
+    try
+    {
+        m_game.removePlayer(m_user);
+        LeaveGameResponse response{ 1 };
+        return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user) };
     }
     catch (const std::exception& e)
     {
