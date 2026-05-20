@@ -18,6 +18,7 @@ public:
 
     ~GameManager() = default;
     Game& createGame(Room& room);
+    Game& getGame(unsigned int gameId);
     void deleteGame(unsigned int gameId);
 private:
     GameManager() = default;

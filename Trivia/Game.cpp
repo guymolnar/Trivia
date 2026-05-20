@@ -1,6 +1,7 @@
 #include "Game.h"
 
-Game::Game(const std::vector<Question>& questions, const std::vector<LoggedUser>& players, unsigned int gameId) : m_questions(questions), m_gameId(gameId)
+Game::Game(const std::vector<Question>& questions, const std::vector<LoggedUser>& players, unsigned int gameId)
+    : m_questions(questions), m_gameId(gameId)
 {
     for (const auto& player : players)
     {
@@ -9,13 +10,25 @@ Game::Game(const std::vector<Question>& questions, const std::vector<LoggedUser>
         data.correctAnswerCount = 0;
         data.wrongAnswerCount = 0;
         data.averageAnswerTime = 0;
+        data.currentQuestionIndex = 0;
+        data.totalAnswerTime = 0;
         m_players[player] = data;
     }
+}
+
+unsigned int Game::getGameId() const
+{
+    return m_gameId;
 }
 
 Question Game::getQuestionForUser(const LoggedUser& user)
 {
     return m_players[user].currentQuestion;
+}
+
+std::map<LoggedUser, GameData> Game::getPlayers()
+{
+    return m_players;
 }
 
 void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned int answerTime)

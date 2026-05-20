@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "Room.h"
+#include "unordered_map"
 
 struct LoginResponse {
 	unsigned int status;

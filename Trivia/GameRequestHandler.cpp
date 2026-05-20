@@ -68,7 +68,7 @@ RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo)
     try
     {
         SubmitAnswerRequest request = JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(requestInfo.buffer);
-        m_game.submitAnswer(m_user, request.answerId);
+        m_game.submitAnswer(m_user, request.answerId, 0);
         Question question = m_game.getQuestionForUser(m_user);
         SubmitAnswerResponse response;
         response.status = 1;
