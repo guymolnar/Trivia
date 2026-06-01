@@ -48,10 +48,10 @@ RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo)
     {
         Question question = m_game.getQuestionForUser(m_user);
         std::vector<std::string> answersList = question.getPossibleAnswers();
-        std::unordered_map<unsigned int, std::string> answersMap;
+        std::map<std::string, std::string> answersMap;
         for (unsigned int i = 0; i < answersList.size(); i++)
         {
-            answersMap[i + 1] = answersList[i];
+            answersMap[std::to_string(i + 1)] = answersList[i];
         }
         GetQuestionResponse response{ 1, question.getQuestion(), answersMap };
         return { JsonResponsePacketSerializer::serializeResponse(response), this };

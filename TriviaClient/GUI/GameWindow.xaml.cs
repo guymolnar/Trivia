@@ -170,8 +170,8 @@ namespace TriviaClient
                 var (code, json) = Communicator.Instance.ReceiveResponse();
                 var response = JsonDeserializer.Deserialize<GetGameResultsResponse>(json);
 
-                //GameResultsWindow results = new GameResultsWindow(_username, response.results!);
-                //results.Show();
+                GameResultsWindow results = new GameResultsWindow(_username, response.results!);
+                results.Show();
                 _closedByButton = true;
                 this.Close();
             }

@@ -11,6 +11,8 @@ namespace TriviaClient
         private string _username;
         private bool _isAdmin;
         private int _roomId;
+        private int _questionCount;
+        private int _answerTimeout;
         private Thread? _refreshingThread;
         private bool _refreshing = false;
         private readonly object _socketLock = new object();
@@ -40,7 +42,8 @@ namespace TriviaClient
                     lstPlayers.Items.Add("No players yet.");
                     return;
                 }
-
+                _questionCount = response.questionCount;
+                _answerTimeout = response.answerTimeOut;
                 foreach (var player in response.players)
                     lstPlayers.Items.Add(player);
 
@@ -91,7 +94,13 @@ namespace TriviaClient
 
                             if (response.hasGameBegan)
                             {
-                                // TODO: open game window
+                                Dispatcher.Invoke(() =>
+                                {
+                                    GameWindow game = new GameWindow(_username, _questionCount, _answerTimeout);
+                                    game.Show();
+                                    _closedByButton = true;
+                                    this.Close();
+                                });
                                 return;
                             }
 
@@ -199,15 +208,19 @@ namespace TriviaClient
                         StartRefreshing();
                         return;
                     }
-
-                    // TODO: open game window
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     StartRefreshing();
+                    return;
                 }
             }
+
+            GameWindow game = new GameWindow(_username, _questionCount, _answerTimeout);
+            game.Show();
+            _closedByButton = true;
+            this.Close();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

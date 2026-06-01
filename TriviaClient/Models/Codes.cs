@@ -21,9 +21,9 @@ namespace TriviaClient.Models
         public const byte START_GAME_REQUEST_CODE = 211;
         public const byte GET_ROOM_STATE_REQUEST_CODE = 212;
         public const byte LEAVE_ROOM_REQUEST_CODE = 213;
-        public const byte GET_QUESTION_REQUEST_CODE = 214;
-        public const byte SUBMIT_ANSWER_REQUEST_CODE = 215;
-        public const byte LEAVE_GAME_REQUEST_CODE = 216;
+        public const byte LEAVE_GAME_REQUEST_CODE = 214;
+        public const byte GET_QUESTION_REQUEST_CODE = 215;
+        public const byte SUBMIT_ANSWER_REQUEST_CODE = 216;
         public const byte GET_GAME_RESULTS_REQUEST_CODE = 217;
 
         public const byte ERROR_RESPONSE_CODE = 100;
