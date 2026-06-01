@@ -1,0 +1,28 @@
+﻿<Window x:Class="TriviaClient.GameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cahoot - Game" Height="550" Width="800"
+        Closing="Window_Closing">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="500" Margin="20">
+                <TextBlock TextAlignment="Center" FontWeight="ExtraBold" FontSize="50" Margin="0,0,0,10">Cahoot!</TextBlock>
+
+                <TextBlock x:Name="txtQuestionNum" TextAlignment="Center" FontSize="13" Foreground="Gray" Margin="0,0,0,2">Q 0/0</TextBlock>
+                <TextBlock x:Name="txtCorrect" TextAlignment="Center" FontSize="13" Foreground="Green" Margin="0,0,0,2">0 correct</TextBlock>
+                <TextBlock x:Name="txtTimer" TextAlignment="Center" FontSize="13" FontWeight="Bold" Foreground="OrangeRed" Margin="0,0,0,15">0s</TextBlock>
+
+                <TextBlock x:Name="txtQuestion" TextAlignment="Center" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,20">Loading...</TextBlock>
+
+                <UniformGrid Rows="2" Columns="2" Margin="0,0,0,20">
+                    <Button x:Name="btn1" Click="Answer_Click" Tag="1" MinHeight="60" FontSize="13" Padding="10" Margin="5"/>
+                    <Button x:Name="btn2" Click="Answer_Click" Tag="2" MinHeight="60" FontSize="13" Padding="10" Margin="5"/>
+                    <Button x:Name="btn3" Click="Answer_Click" Tag="3" MinHeight="60" FontSize="13" Padding="10" Margin="5"/>
+                    <Button x:Name="btn4" Click="Answer_Click" Tag="4" MinHeight="60" FontSize="13" Padding="10" Margin="5"/>
+                </UniformGrid>
+
+                <Button x:Name="btnLeave" Click="btnLeave_Click" Padding="8" FontSize="12" Background="#FFDDDD">Leave Game</Button>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
