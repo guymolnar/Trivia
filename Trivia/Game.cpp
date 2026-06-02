@@ -64,3 +64,8 @@ void Game::submitStatsToDB(const GameData& data, const std::string& username)
 {
     SqliteDataBase::getInstance().submitGameStatistics(username, data.correctAnswerCount, data.wrongAnswerCount, data.averageAnswerTime);
 }
+
+bool Game::hasFinished(const LoggedUser& user)
+{
+    return m_players[user].currentQuestionIndex >= m_questions.size();
+}
