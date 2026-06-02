@@ -46,6 +46,11 @@ RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo)
 {
     try
     {
+        if (m_game.hasFinished(m_user))
+        {
+            GetQuestionResponse response{ 0, "", {} };
+            return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        }
         Question question = m_game.getQuestionForUser(m_user);
         std::vector<std::string> answersList = question.getPossibleAnswers();
         std::map<std::string, std::string> answersMap;
