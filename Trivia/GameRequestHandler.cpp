@@ -80,8 +80,11 @@ RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo)
         SubmitAnswerRequest request = JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(requestInfo.buffer);
 
         int correctId = m_game.getQuestionForUser(m_user).getCorrectAnswerId();
-        m_game.submitAnswer(m_user, request.answerId, 0);
-
+        m_game.submitAnswer(m_user, request.answerId, request.answerTime);
+        if (m_game.hasFinished(m_user))
+        {
+            m_game.submitStatsForUser(m_user);  
+        }
         SubmitAnswerResponse response;
         response.status = 1;
         response.correctAnswerId = correctId;

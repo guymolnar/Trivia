@@ -69,3 +69,8 @@ bool Game::hasFinished(const LoggedUser& user)
 {
     return m_players[user].currentQuestionIndex >= m_questions.size();
 }
+
+void Game::submitStatsForUser(const LoggedUser& user)
+{
+    submitStatsToDB(m_players[user], user.getUsername());
+}

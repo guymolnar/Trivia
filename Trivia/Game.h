@@ -28,6 +28,7 @@ public:
     void removePlayer(const LoggedUser& user);
     void submitStatsToDB(const GameData& data, const std::string& username);
     bool hasFinished(const LoggedUser& user);
+    void submitStatsForUser(const LoggedUser& user);
 
 private:
     std::vector<Question> m_questions;
