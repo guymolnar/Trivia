@@ -75,4 +75,16 @@ namespace TriviaClient.Models
     {
         public int roomId;
     }
+
+    public class GetQuestionRequest : IRequest { }
+
+    public class SubmitAnswerRequest : IRequest
+    {
+        public int answerId;
+        public int answerTime;
+    }
+
+    public class LeaveGameRequest : IRequest { }
+
+    public class GetGameResultsRequest : IRequest { }
 }
