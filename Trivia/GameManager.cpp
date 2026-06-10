@@ -6,7 +6,10 @@ Game& GameManager::createGame(Room& room)
 
     RoomData meta = room.getRoomMetadata();
     std::vector<Question> questions = SqliteDataBase::getInstance().getQuestions(meta.numOfQuestions);
-
+    if (questions.empty())
+    {
+        throw std::exception("Not enough questions in the database");
+    }
     std::vector<std::string> usernames = room.getAllUsers();
     std::vector<LoggedUser> players;
     for (const auto& username : usernames)
@@ -32,6 +35,8 @@ Game& GameManager::getGame(unsigned int gameId)
 
 void GameManager::deleteGame(unsigned int gameId)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     for (auto it = m_games.begin(); it != m_games.end(); ++it)
     {
         if (it->getGameId() == gameId)
