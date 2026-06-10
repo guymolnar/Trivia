@@ -98,13 +98,13 @@ namespace TriviaClient
                     SubmitAnswer(0);
 
                 }
+                LoadNextQuestion();
             }
         }
 
         private void Answer_Click(object sender, RoutedEventArgs e)
         {
             if (_answered) return;
-            _timer.Stop();
             int answerId = int.Parse(((Button)sender).Tag.ToString()!);
             SubmitAnswer(answerId);
         }
@@ -149,10 +149,6 @@ namespace TriviaClient
             {
                 MessageBox.Show(ex.Message, "Error");
             }
-
-            var delay = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
-            delay.Tick += (s, e2) => { delay.Stop(); LoadNextQuestion(); };
-            delay.Start();
         }
 
         private void PollForResults()

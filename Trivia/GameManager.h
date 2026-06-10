@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <list>
 #include <string>
 #include "SqliteDataBase.h"
 #include "Game.h"
@@ -22,6 +22,6 @@ public:
     void deleteGame(unsigned int gameId);
 private:
     GameManager() = default;
-    std::vector<Game> m_games;
+    std::list<Game> m_games;
     //Database is a singleton so no m_database
 };
