@@ -3,6 +3,7 @@
 
 unsigned int RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     roomData.id = m_nextRoomId++;
     Room newRoom(roomData);
     newRoom.addUser(roomAdmin);
@@ -12,11 +13,14 @@ unsigned int RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
 
 void RoomManager::deleteRoom(unsigned int id)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     m_rooms.erase(id);
 }
 
 Room* RoomManager::getRoom(unsigned int id)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     auto it = m_rooms.find(id);
     if (it == m_rooms.end())
     {
@@ -27,6 +31,8 @@ Room* RoomManager::getRoom(unsigned int id)
 
 RoomStatus RoomManager::getRoomState(unsigned int id)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     Room* r = getRoom(id);
     if (!r)
     {
@@ -37,6 +43,8 @@ RoomStatus RoomManager::getRoomState(unsigned int id)
 
 std::vector<RoomData> RoomManager::getRooms()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     std::vector<RoomData> roomsVector;
     for (auto& [id, room] : m_rooms)
     {

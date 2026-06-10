@@ -2,6 +2,8 @@
 #include <vector>
 #include "IDatabase.h"
 #include "LoggedUser.h"
+#include "mutex"
+
 class LoginManager {
 public:
 	static LoginManager& getInstance(IDatabase* IDB)
@@ -20,4 +22,5 @@ private:
 	LoginManager(IDatabase* IDB);
 	IDatabase* m_database;
 	std::vector<LoggedUser> m_loggedUsers;
+	std::mutex m_mutex;
 };

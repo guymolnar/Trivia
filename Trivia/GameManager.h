@@ -3,6 +3,7 @@
 #include <string>
 #include "SqliteDataBase.h"
 #include "Game.h"
+#include "mutex"
 
 class GameManager
 {
@@ -24,4 +25,5 @@ private:
     GameManager() = default;
     std::list<Game> m_games;
     //Database is a singleton so no m_database
+    std::mutex m_mutex;
 };

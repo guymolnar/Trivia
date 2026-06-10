@@ -2,6 +2,8 @@
 
 Game& GameManager::createGame(Room& room)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     RoomData meta = room.getRoomMetadata();
     std::vector<Question> questions = SqliteDataBase::getInstance().getQuestions(meta.numOfQuestions);
 
@@ -18,6 +20,8 @@ Game& GameManager::createGame(Room& room)
 
 Game& GameManager::getGame(unsigned int gameId)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     for (auto& game : m_games)
     {
         if (game.getGameId() == gameId)
