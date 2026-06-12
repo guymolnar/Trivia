@@ -74,3 +74,15 @@ void Game::submitStatsForUser(const LoggedUser& user)
 {
     submitStatsToDB(m_players[user], user.getUsername());
 }
+
+bool Game::allPlayersFinished()
+{
+    for (const auto& [user, data] : m_players)
+    {
+        if (data.currentQuestionIndex < m_questions.size())
+        {
+            return false;
+        }
+    }
+    return true;
+}

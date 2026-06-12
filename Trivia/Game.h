@@ -29,6 +29,7 @@ public:
     void submitStatsToDB(const GameData& data, const std::string& username);
     bool hasFinished(const LoggedUser& user);
     void submitStatsForUser(const LoggedUser& user);
+    bool allPlayersFinished();
 
 private:
     std::vector<Question> m_questions;

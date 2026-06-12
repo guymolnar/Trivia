@@ -101,6 +101,11 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
 {
     try
     {
+        if (!m_game.allPlayersFinished())
+        {
+            GetGameResultsResponse response{ 0, {} };
+            return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        }
         std::vector<PlayerResults> results;
         for (const auto& [user, data] : m_game.getPlayers())
         {

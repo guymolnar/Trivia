@@ -160,21 +160,29 @@ namespace TriviaClient
             {
                 btn.Content = "";
             }
-            try
+            var pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            pollTimer.Tick += (s, e) =>
             {
-                Communicator.Instance.SendRequest(GET_GAME_RESULTS_REQUEST_CODE, new GetGameResultsRequest());
-                var (code, json) = Communicator.Instance.ReceiveResponse();
-                var response = JsonDeserializer.Deserialize<GetGameResultsResponse>(json);
+                try
+                {
+                    Communicator.Instance.SendRequest(GET_GAME_RESULTS_REQUEST_CODE, new GetGameResultsRequest());
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    if (code == ERROR_RESPONSE_CODE) return;
 
-                GameResultsWindow results = new GameResultsWindow(_username, response.results!);
-                results.Show();
-                _closedByButton = true;
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error");
-            }
+                    var response = JsonDeserializer.Deserialize<GetGameResultsResponse>(json);
+                    if (response.status == 0 || response.results == null)
+                    {
+                        return;
+                    }
+                    pollTimer.Stop();
+                    GameResultsWindow results = new GameResultsWindow(_username, response.results);
+                    results.Show();
+                    _closedByButton = true;
+                    this.Close();
+                }
+                catch { }
+            };
+            pollTimer.Start();
         }
 
         private void ResetButtonColors()
