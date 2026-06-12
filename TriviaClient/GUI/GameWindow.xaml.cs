@@ -20,6 +20,7 @@ namespace TriviaClient
         private int _timeLeft;
         private DateTime _questionStartTime;
         private DispatcherTimer _timer;
+        private DispatcherTimer _pollTimer;
         private bool _answered = false;
         private bool _closedByButton = false;
         private Dictionary<int, Button> _answerButtons;
@@ -160,8 +161,8 @@ namespace TriviaClient
             {
                 btn.Content = "";
             }
-            var pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            pollTimer.Tick += (s, e) =>
+            _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _pollTimer.Tick += (s, e) =>
             {
                 try
                 {
@@ -174,7 +175,7 @@ namespace TriviaClient
                     {
                         return;
                     }
-                    pollTimer.Stop();
+                    _pollTimer.Stop();
                     GameResultsWindow results = new GameResultsWindow(_username, response.results);
                     results.Show();
                     _closedByButton = true;
@@ -182,7 +183,7 @@ namespace TriviaClient
                 }
                 catch { }
             };
-            pollTimer.Start();
+            _pollTimer.Start();
         }
 
         private void ResetButtonColors()
@@ -204,6 +205,7 @@ namespace TriviaClient
         private void btnLeave_Click(object sender, RoutedEventArgs e)
         {
             _timer.Stop();
+            _pollTimer?.Stop();
             try
             {
                 Communicator.Instance.SendRequest(LEAVE_GAME_REQUEST_CODE, new LeaveGameRequest());
@@ -219,6 +221,7 @@ namespace TriviaClient
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _timer.Stop();
+            _pollTimer?.Stop();
             if (_closedByButton) return;
             try
             {

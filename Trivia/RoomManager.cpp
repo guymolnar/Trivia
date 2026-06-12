@@ -33,12 +33,12 @@ RoomStatus RoomManager::getRoomState(unsigned int id)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    Room* r = getRoom(id);
-    if (!r)
+    auto it = m_rooms.find(id);
+    if (it == m_rooms.end())
     {
         throw std::exception("Room does not exist");
     }
-    return r->getRoomMetadata().status;
+    return it->second.getRoomMetadata().status;
 }
 
 std::vector<RoomData> RoomManager::getRooms()
