@@ -18,6 +18,7 @@ void LoginManager::signup(const std::string& name, const std::string& password, 
         throw std::exception("User already exists");
     }
     m_database->addNewUser(name, password, mail, address, phone, birthday);
+    m_loggedUsers.push_back(LoggedUser(name));
 }
 
 void LoginManager::login(const std::string& name, const std::string& password)

@@ -57,6 +57,10 @@ void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned 
 
 void Game::removePlayer(const LoggedUser& user)
 {
+    if (m_players[user].currentQuestionIndex >= m_questions.size())
+    {
+        return;
+    }
     submitStatsToDB(m_players[user], user.getUsername());
     m_players[user].currentQuestionIndex = m_questions.size();
 }
