@@ -48,7 +48,10 @@ std::vector<RoomData> RoomManager::getRooms()
     std::vector<RoomData> roomsVector;
     for (auto& [id, room] : m_rooms)
     {
-        roomsVector.push_back(room.getRoomMetadata());
+        if(room.getRoomMetadata().status == INACTIVE)
+        {
+            roomsVector.push_back(room.getRoomMetadata());
+        }
     }
     return roomsVector;
 }
