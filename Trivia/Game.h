@@ -5,6 +5,7 @@
 #include "LoggedUser.h"
 #include "Responses.h"
 #include "SqliteDataBase.h"
+#include <mutex>
 
 struct GameData
 {
@@ -35,4 +36,5 @@ private:
     std::vector<Question> m_questions;
     std::map<LoggedUser, GameData> m_players;
     unsigned int m_gameId;
+    std::mutex m_mutex;
 };
