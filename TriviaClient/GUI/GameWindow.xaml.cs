@@ -20,6 +20,7 @@ namespace TriviaClient
         private int _timeLeft;
         private DateTime _questionStartTime;
         private DispatcherTimer _timer;
+        private DispatcherTimer _pollTimer;
         private bool _answered = false;
         private bool _closedByButton = false;
         private Dictionary<int, Button> _answerButtons;
@@ -98,13 +99,13 @@ namespace TriviaClient
                     SubmitAnswer(0);
 
                 }
+                LoadNextQuestion();
             }
         }
 
         private void Answer_Click(object sender, RoutedEventArgs e)
         {
             if (_answered) return;
-            _timer.Stop();
             int answerId = int.Parse(((Button)sender).Tag.ToString()!);
             SubmitAnswer(answerId);
         }
@@ -149,10 +150,6 @@ namespace TriviaClient
             {
                 MessageBox.Show(ex.Message, "Error");
             }
-
-            var delay = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
-            delay.Tick += (s, e2) => { delay.Stop(); LoadNextQuestion(); };
-            delay.Start();
         }
 
         private void PollForResults()
@@ -164,21 +161,29 @@ namespace TriviaClient
             {
                 btn.Content = "";
             }
-            try
+            _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _pollTimer.Tick += (s, e) =>
             {
-                Communicator.Instance.SendRequest(GET_GAME_RESULTS_REQUEST_CODE, new GetGameResultsRequest());
-                var (code, json) = Communicator.Instance.ReceiveResponse();
-                var response = JsonDeserializer.Deserialize<GetGameResultsResponse>(json);
+                try
+                {
+                    Communicator.Instance.SendRequest(GET_GAME_RESULTS_REQUEST_CODE, new GetGameResultsRequest());
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    if (code == ERROR_RESPONSE_CODE) return;
 
-                GameResultsWindow results = new GameResultsWindow(_username, response.results!);
-                results.Show();
-                _closedByButton = true;
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error");
-            }
+                    var response = JsonDeserializer.Deserialize<GetGameResultsResponse>(json);
+                    if (response.status == 0 || response.results == null)
+                    {
+                        return;
+                    }
+                    _pollTimer.Stop();
+                    GameResultsWindow results = new GameResultsWindow(_username, response.results);
+                    results.Show();
+                    _closedByButton = true;
+                    this.Close();
+                }
+                catch { }
+            };
+            _pollTimer.Start();
         }
 
         private void ResetButtonColors()
@@ -200,6 +205,7 @@ namespace TriviaClient
         private void btnLeave_Click(object sender, RoutedEventArgs e)
         {
             _timer.Stop();
+            _pollTimer?.Stop();
             try
             {
                 Communicator.Instance.SendRequest(LEAVE_GAME_REQUEST_CODE, new LeaveGameRequest());
@@ -215,6 +221,7 @@ namespace TriviaClient
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _timer.Stop();
+            _pollTimer?.Stop();
             if (_closedByButton) return;
             try
             {

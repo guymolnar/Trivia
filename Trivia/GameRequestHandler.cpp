@@ -46,6 +46,11 @@ RequestResult GameRequestHandler::getQuestion(const RequestInfo& requestInfo)
 {
     try
     {
+        if (m_game.hasFinished(m_user))
+        {
+            GetQuestionResponse response{ 0, "", {} };
+            return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        }
         Question question = m_game.getQuestionForUser(m_user);
         std::vector<std::string> answersList = question.getPossibleAnswers();
         std::map<std::string, std::string> answersMap;
@@ -67,14 +72,23 @@ RequestResult GameRequestHandler::submitAnswer(const RequestInfo& requestInfo)
 {
     try
     {
+        if (m_game.hasFinished(m_user))
+        {
+            SubmitAnswerResponse response{ 0, 0 };
+            return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        }
         SubmitAnswerRequest request = JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(requestInfo.buffer);
-        m_game.submitAnswer(m_user, request.answerId, 0);
-        Question question = m_game.getQuestionForUser(m_user);
+
+        int correctId = m_game.getQuestionForUser(m_user).getCorrectAnswerId();
+        m_game.submitAnswer(m_user, request.answerId, request.answerTime);
+        if (m_game.hasFinished(m_user))
+        {
+            m_game.submitStatsForUser(m_user);  
+        }
         SubmitAnswerResponse response;
         response.status = 1;
-        response.correctAnswerId = question.getCorrectAnswerId();
-
-        return RequestResult{ JsonResponsePacketSerializer::serializeResponse(response), this};
+        response.correctAnswerId = correctId;
+        return { JsonResponsePacketSerializer::serializeResponse(response), this };
     }
     catch (const std::exception& e)
     {
@@ -87,13 +101,19 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
 {
     try
     {
+        if (!m_game.allPlayersFinished())
+        {
+            GetGameResultsResponse response{ 0, {} };
+            return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        }
         std::vector<PlayerResults> results;
         for (const auto& [user, data] : m_game.getPlayers())
         {
             results.push_back({ user.getUsername(), data.correctAnswerCount, data.wrongAnswerCount, data.averageAnswerTime });
         }
+
         GetGameResultsResponse response{ 1, results };
-        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user)};
     }
     catch (const std::exception& e)
     {

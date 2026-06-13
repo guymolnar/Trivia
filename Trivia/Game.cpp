@@ -23,16 +23,19 @@ unsigned int Game::getGameId() const
 
 Question Game::getQuestionForUser(const LoggedUser& user)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     return m_players[user].currentQuestion;
 }
 
 std::map<LoggedUser, GameData> Game::getPlayers()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     return m_players;
 }
 
 void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned int answerTime)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     GameData& data = m_players[user];
 
     if (answerId == static_cast<unsigned int>(data.currentQuestion.getCorrectAnswerId()))
@@ -57,10 +60,41 @@ void Game::submitAnswer(const LoggedUser& user, unsigned int answerId, unsigned 
 
 void Game::removePlayer(const LoggedUser& user)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (m_players[user].currentQuestionIndex >= m_questions.size())
+    {
+        return;
+    }
     submitStatsToDB(m_players[user], user.getUsername());
+    m_players[user].currentQuestionIndex = m_questions.size();
 }
 
 void Game::submitStatsToDB(const GameData& data, const std::string& username)
 {
     SqliteDataBase::getInstance().submitGameStatistics(username, data.correctAnswerCount, data.wrongAnswerCount, data.averageAnswerTime);
+}
+
+bool Game::hasFinished(const LoggedUser& user)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_players[user].currentQuestionIndex >= m_questions.size();
+}
+
+void Game::submitStatsForUser(const LoggedUser& user)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    submitStatsToDB(m_players[user], user.getUsername());
+}
+
+bool Game::allPlayersFinished()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    for (const auto& [user, data] : m_players)
+    {
+        if (data.currentQuestionIndex < m_questions.size())
+        {
+            return false;
+        }
+    }
+    return true;
 }

@@ -33,5 +33,5 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 SubmitAnswerRequest JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(const std::vector<uint8_t>& buffer)
 {
 	json requestJson = json::parse(buffer.begin(), buffer.end());
-	return SubmitAnswerRequest{ requestJson.at("answerId") };
+	return SubmitAnswerRequest{ requestJson.at("answerId"), requestJson.at("answerTime") };
 }

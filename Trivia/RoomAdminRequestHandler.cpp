@@ -44,6 +44,7 @@ RequestResult RoomAdminRequestHandler::closeRoom(const RequestInfo& requestInfo)
         std::vector<std::string> members = room->getAllUsers();
         members.erase(std::remove(members.begin(), members.end(), m_user.getUsername()), members.end());
         LeaveRoomResponse leaveResponse{ 1 };
+        m_handlerFactory.getGameManager().deleteGame(m_roomId);
         m_roomManager.deleteRoom(m_roomId);
         CloseRoomResponse response{ 1 };
         return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user) };
