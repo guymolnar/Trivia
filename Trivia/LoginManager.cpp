@@ -12,15 +12,18 @@ LoginManager::~LoginManager()
 
 void LoginManager::signup(const std::string& name, const std::string& password, const std::string& mail, const std::string& address, const std::string& phone, const std::string& birthday)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (m_database->doesUserExist(name))
     {
         throw std::exception("User already exists");
     }
     m_database->addNewUser(name, password, mail, address, phone, birthday);
+    m_loggedUsers.push_back(LoggedUser(name));
 }
 
 void LoginManager::login(const std::string& name, const std::string& password)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     for (auto& user : m_loggedUsers)
     {
         if (user.getUsername() == name)
@@ -41,6 +44,7 @@ void LoginManager::login(const std::string& name, const std::string& password)
 
 void LoginManager::logout(const std::string& name)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     if (!m_database->doesUserExist(name))
     {
         throw std::exception("User does not exist");

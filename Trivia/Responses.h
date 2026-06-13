@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include "Room.h"
+#include "unordered_map"
 
 struct LoginResponse {
 	unsigned int status;
@@ -66,3 +67,31 @@ struct GetRoomStateResponse {
 struct LeaveRoomResponse {
 	unsigned int status;
 };
+
+struct LeaveGameResponse {
+	unsigned int status;
+};
+
+struct GetQuestionResponse {
+	unsigned int status;
+	std::string question;
+	std::map<std::string, std::string> answers;
+};
+
+struct SubmitAnswerResponse {
+	unsigned int status;
+	unsigned int correctAnswerId;
+};
+
+struct PlayerResults {
+	std::string username;
+	unsigned int correctAnswerCount;
+	unsigned int wrongAnswerCount;
+	unsigned int averageAnswerTime;
+};
+
+struct GetGameResultsResponse {
+	unsigned int status;
+	std::vector<PlayerResults> results;
+};
+

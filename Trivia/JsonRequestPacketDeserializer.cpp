@@ -29,3 +29,9 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 	json requestJson = json::parse(buffer.begin(), buffer.end());
 	return CreateRoomRequest{ requestJson.at("roomName"), requestJson.at("maxUsers"), requestJson.at("questionsCount"), requestJson.at("answersTimeout") };
 }
+
+SubmitAnswerRequest JsonRequestPacketDeserializer::deserializeSubmitAnswerRequest(const std::vector<uint8_t>& buffer)
+{
+	json requestJson = json::parse(buffer.begin(), buffer.end());
+	return SubmitAnswerRequest{ requestJson.at("answerId"), requestJson.at("answerTime") };
+}

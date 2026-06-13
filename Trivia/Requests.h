@@ -46,3 +46,8 @@ struct GetRoomStateRequest {
 struct LeaveRoomRequest {
 	unsigned int roomId;
 };
+
+struct SubmitAnswerRequest {
+	unsigned int answerId;
+	unsigned int answerTime;
+};

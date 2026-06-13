@@ -149,3 +149,19 @@ std::vector<std::string> SqliteDataBase::getHighScores()
         }, &scores, nullptr);
     return scores;
 }
+
+int SqliteDataBase::submitGameStatistics(const std::string& username, unsigned int correctAnswers, unsigned int wrongAnswers, unsigned int averageAnswerTime)
+{
+    unsigned int totalAnswers = correctAnswers + wrongAnswers;
+    std::string query =
+        "INSERT INTO statistics (username, totalCorrectAnswers, totalWrongAnswers, totalAnswerTime, totalAnswers, numOfGames) "
+        "VALUES ('" + username + "', " + std::to_string(correctAnswers) + ", " + std::to_string(wrongAnswers) + ", " +
+        std::to_string(averageAnswerTime) + ", " + std::to_string(totalAnswers) + ", 1) "
+        "ON CONFLICT(username) DO UPDATE SET "
+        "totalCorrectAnswers = totalCorrectAnswers + " + std::to_string(correctAnswers) + ", "
+        "totalWrongAnswers = totalWrongAnswers + " + std::to_string(wrongAnswers) + ", "
+        "totalAnswerTime = totalAnswerTime + " + std::to_string(averageAnswerTime) + ", "
+        "totalAnswers = totalAnswers + " + std::to_string(totalAnswers) + ", "
+        "numOfGames = numOfGames + 1;";
+    return sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, nullptr) == SQLITE_OK;
+}
