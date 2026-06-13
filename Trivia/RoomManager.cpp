@@ -5,9 +5,8 @@ unsigned int RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     roomData.id = m_nextRoomId++;
-    Room newRoom(roomData);
+    Room& newRoom = m_rooms.try_emplace(roomData.id, roomData).first->second;
     newRoom.addUser(roomAdmin);
-    m_rooms[roomData.id] = newRoom;
     return roomData.id;
 }
 

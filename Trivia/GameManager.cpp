@@ -17,7 +17,7 @@ Game& GameManager::createGame(Room& room)
         players.push_back(LoggedUser(username));
     }
 
-    m_games.push_back(Game(questions, players, meta.id));
+    m_games.emplace_back(questions, players, meta.id);
     return m_games.back();
 }
 
