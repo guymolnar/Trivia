@@ -2,6 +2,7 @@
 #include <string>
 #include "LoggedUser.h"
 #include <vector>
+#include <mutex>
 
 enum RoomStatus
 {
@@ -33,4 +34,5 @@ public:
 private:
 	RoomData m_metadata;
 	std::vector<LoggedUser> m_users;
+	std::mutex m_mutex;
 };

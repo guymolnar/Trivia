@@ -111,6 +111,7 @@ RequestResult GameRequestHandler::getGameResults(const RequestInfo& requestInfo)
         {
             results.push_back({ user.getUsername(), data.correctAnswerCount, data.wrongAnswerCount, data.averageAnswerTime });
         }
+
         GetGameResultsResponse response{ 1, results };
         return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createMenuRequestHandler(m_user)};
     }
