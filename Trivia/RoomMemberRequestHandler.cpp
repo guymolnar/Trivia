@@ -38,6 +38,7 @@ RequestResult RoomMemberRequestHandler::leaveRoom(const RequestInfo& requestInfo
         room->removeUser(m_user);
         if (room->getAllUsers().empty())
         {
+            m_handlerFactory.getGameManager().deleteGame(m_roomId);
             m_roomManager.deleteRoom(m_roomId);
         }
         LeaveRoomResponse response{ 1 };
