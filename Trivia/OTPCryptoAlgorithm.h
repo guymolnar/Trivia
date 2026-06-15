@@ -1,12 +1,11 @@
 #pragma once
-#pragma once
 #include "CryptoAlgorithm.h"
 
 class OTPCryptoAlgorithm : public CryptoAlgorithm {
 public:
-    OTPCryptoAlgorithm(const std::string& key);
-    std::string encrypt(std::string message) override;
-    std::string decrypt(std::string cypher) override;
+    OTPCryptoAlgorithm(const std::vector<uint8_t>& key);
+    std::vector<uint8_t> encrypt(std::vector<uint8_t> message) override;
+    std::vector<uint8_t> decrypt(std::vector<uint8_t> cypher) override;
 private:
-    std::string m_key;
+    std::vector<uint8_t> m_key;  
 };
