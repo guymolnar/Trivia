@@ -13,3 +13,12 @@ std::vector<uint8_t> OTPCryptoAlgorithm::encrypt(std::vector<uint8_t> message)
     }
     return message;
 }
+
+std::vector<uint8_t> OTPCryptoAlgorithm::decrypt(std::vector<uint8_t> cypher)
+{
+    for (size_t i = 0; i < cypher.size(); i++)
+    {
+        cypher[i] ^= m_key[i % m_key.size()];
+    }
+    return cypher;
+}
