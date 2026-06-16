@@ -18,3 +18,14 @@ std::vector<uint8_t> AESCryptoAlgorithm::encrypt(std::vector<uint8_t> message)
 
     return std::vector<uint8_t>(cipher.begin(), cipher.end());
 }
+
+std::vector<uint8_t> AESCryptoAlgorithm::decrypt(std::vector<uint8_t> cypher)
+{
+    CryptoPP::ECB_Mode<CryptoPP::AES>::Decryption dec;
+    dec.SetKey(m_key.data(), m_key.size());
+
+    std::string recovered;
+    CryptoPP::StringSource ss(cypher.data(), cypher.size(), true, new CryptoPP::StreamTransformationFilter(dec, new CryptoPP::StringSink(recovered)));
+
+    return std::vector<uint8_t>(recovered.begin(), recovered.end());
+}
