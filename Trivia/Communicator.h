@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include "IRequestHandler.h"
 #include "LoginRequestHandler.h"
+#include "CryptoAlgorithm.h"
 
 #define CODE_SIZE 1
 #define LENGTH_SIZE 4
@@ -31,8 +32,10 @@ private:
 	std::unordered_map<SOCKET, IRequestHandler*> m_clients;
 	std::mutex m_clientsMutex;
 	RequestHandlerFactory& m_handlerFactory;
+	CryptoAlgorithm* m_crypto;
 	void bindAndListen();
 	void handleNewClient(SOCKET clientSocket);
 	bool readMessage(SOCKET clientSocket, RequestInfo& requestInfo);
+	void sendResponse(SOCKET clientSocket, const std::vector<uint8_t>& serialized);
 	static bool recvAll(SOCKET s, char* buffer, int length);
 };

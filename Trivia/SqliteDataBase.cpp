@@ -1,4 +1,5 @@
 #include "SqliteDataBase.h"
+#include <cryptopp/osrng.h>
 
 SqliteDataBase::SqliteDataBase() : m_db(nullptr)
 {
