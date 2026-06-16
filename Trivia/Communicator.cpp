@@ -84,12 +84,12 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 			{
 				ErrorResponse err{ "Request not relevant" };
 				auto response = JsonResponsePacketSerializer::serializeResponse(err);
-				send(clientSocket, reinterpret_cast<const char*>(response.data()), response.size(), 0);
+				sendResponse(clientSocket, response);
 				continue;
 			}
 
 			RequestResult result = handler->handleRequest(requestInfo);
-			send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
+			sendResponse(clientSocket, result.buffer);
 
 			{
 				std::lock_guard<std::mutex> lock(m_clientsMutex);

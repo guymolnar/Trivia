@@ -161,6 +161,7 @@
     <ClCompile Include="WSAInitializer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AESCryptoAlgorithm.h" />
     <ClInclude Include="Communicator.h" />
     <ClInclude Include="CryptoAlgorithm.h" />
     <ClInclude Include="Game.h" />
