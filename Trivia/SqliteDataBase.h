@@ -28,7 +28,6 @@ public:
     int getPlayerScore(const std::string& username) override;
     std::vector<std::string> getHighScores() override;
     int submitGameStatistics(const std::string& username, unsigned int correctAnswers, unsigned int wrongAnswers, unsigned int averageAnswerTime) override;
-    std::vector<uint8_t> getOrCreateCryptoKey() override;
 private:
     SqliteDataBase();
     sqlite3* m_db;

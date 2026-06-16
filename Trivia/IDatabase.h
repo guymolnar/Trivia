@@ -18,5 +18,4 @@ public:
 	virtual int getPlayerScore(const std::string& username) = 0;
 	virtual std::vector<std::string> getHighScores() = 0;
 	virtual int submitGameStatistics(const std::string& username, unsigned int correctAnswers, unsigned int wrongAnswers, unsigned int averageAnswerTime) = 0;
-	virtual std::vector<uint8_t> getOrCreateCryptoKey() = 0;
 };
