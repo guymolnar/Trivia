@@ -1,11 +1,14 @@
 #include "Communicator.h"
 #include "RequestHandlerFactory.h"
+#include "AESCryptoAlgorithm.h"
+#include "SqliteDataBase.h"
 
 static const unsigned short PORT = 8826;
 static const unsigned int IFACE = 0;
 
 Communicator::Communicator(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory)
 {
+	m_crypto = new AESCryptoAlgorithm(SqliteDataBase::getInstance().getOrCreateCryptoKey());
 	this->m_serverSocket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (this->m_serverSocket == INVALID_SOCKET)
 	{
