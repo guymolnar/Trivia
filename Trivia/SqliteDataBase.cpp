@@ -1,4 +1,5 @@
 #include "SqliteDataBase.h"
+#include <cryptopp/osrng.h>
 
 SqliteDataBase::SqliteDataBase() : m_db(nullptr)
 {
@@ -164,4 +165,38 @@ int SqliteDataBase::submitGameStatistics(const std::string& username, unsigned i
         "totalAnswers = totalAnswers + " + std::to_string(totalAnswers) + ", "
         "numOfGames = numOfGames + 1;";
     return sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, nullptr) == SQLITE_OK;
+}
+
+std::vector<uint8_t> SqliteDataBase::getOrCreateCryptoKey()
+{
+    sqlite3_exec(m_db,
+        "CREATE TABLE IF NOT EXISTS crypto (id INTEGER PRIMARY KEY, keyBlob BLOB NOT NULL);",
+        nullptr, nullptr, nullptr);
+
+    std::vector<uint8_t> key;
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(m_db, "SELECT keyBlob FROM crypto WHERE id = 1;", -1, &stmt, nullptr);
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        const uint8_t* blob = reinterpret_cast<const uint8_t*>(sqlite3_column_blob(stmt, 0));
+        int bytes = sqlite3_column_bytes(stmt, 0);
+        key.assign(blob, blob + bytes);
+    }
+    sqlite3_finalize(stmt);
+    if (!key.empty())
+    {
+        return key;
+    }
+
+    key.resize(32);
+    CryptoPP::AutoSeededRandomPool rng;
+    rng.GenerateBlock(key.data(), key.size()); //generating a random key of bytes
+
+    sqlite3_stmt* ins;
+    sqlite3_prepare_v2(m_db, "INSERT INTO crypto (id, keyBlob) VALUES (1, ?);", -1, &ins, nullptr);
+    sqlite3_bind_blob(ins, 1, key.data(), static_cast<int>(key.size()), SQLITE_STATIC);
+    sqlite3_step(ins);
+    sqlite3_finalize(ins);
+
+    return key;
 }
