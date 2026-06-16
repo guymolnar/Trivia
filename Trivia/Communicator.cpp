@@ -27,6 +27,7 @@ Communicator::~Communicator()
 		}
 		m_clients.clear();
 		::closesocket(this->m_serverSocket);
+		delete m_crypto;
 	}
 	catch (...) {}
 }
@@ -174,6 +175,22 @@ bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 
 	requestInfo.id = code;
 	requestInfo.receivalTime = time(nullptr);
-	requestInfo.buffer = payload;
+	requestInfo.buffer = m_crypto->decrypt(payload);
 	return true;
+}
+
+void Communicator::sendResponse(SOCKET clientSocket, const std::vector<uint8_t>& serialized)
+{
+	uint8_t code = serialized[0];
+	std::vector<uint8_t> body(serialized.begin() + 5, serialized.end());   //skipping [code][len]
+	std::vector<uint8_t> cipher = m_crypto->encrypt(body);
+
+	std::vector<uint8_t> packet;
+	packet.push_back(code);
+	uint32_t len = htonl(static_cast<uint32_t>(cipher.size()));
+	const uint8_t* lenBytes = reinterpret_cast<const uint8_t*>(&len);
+	packet.insert(packet.end(), lenBytes, lenBytes + 4);
+	packet.insert(packet.end(), cipher.begin(), cipher.end());
+
+	send(clientSocket, reinterpret_cast<const char*>(packet.data()), static_cast<int>(packet.size()), 0);
 }

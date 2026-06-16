@@ -36,5 +36,6 @@ private:
 	void bindAndListen();
 	void handleNewClient(SOCKET clientSocket);
 	bool readMessage(SOCKET clientSocket, RequestInfo& requestInfo);
+	void sendResponse(SOCKET clientSocket, const std::vector<uint8_t>& serialized);
 	static bool recvAll(SOCKET s, char* buffer, int length);
 };
