@@ -21,3 +21,13 @@ std::vector<uint8_t> RSACryptoAlgorithm::encrypt(std::vector<uint8_t> message)
     CryptoPP::StringSource ss(message.data(), message.size(), true, new CryptoPP::PK_EncryptorFilter(rng, enc, new CryptoPP::StringSink(cipher)));
     return std::vector<uint8_t>(cipher.begin(), cipher.end());
 }
+
+std::vector<uint8_t> RSACryptoAlgorithm::decrypt(std::vector<uint8_t> cypher)
+{
+    CryptoPP::AutoSeededRandomPool rng;
+    CryptoPP::RSAES_OAEP_SHA_Decryptor dec(m_privateKey);
+
+    std::string recovered;
+    CryptoPP::StringSource ss(cypher.data(), cypher.size(), true, new CryptoPP::PK_DecryptorFilter(rng, dec, new CryptoPP::StringSink(recovered)));
+    return std::vector<uint8_t>(recovered.begin(), recovered.end());
+}
