@@ -1,0 +1,22 @@
+<Window x:Class="TriviaClient.StatisticsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cahoot - Statistics" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="350" Margin="20">
+                <TextBlock TextAlignment="Center" FontWeight="ExtraBold" FontSize="50" Margin="0,0,0,10">Cahoot!</TextBlock>
+                <TextBlock TextAlignment="Center" FontSize="16" Margin="0,0,0,30">Statistics</TextBlock>
+
+                <Button x:Name="btnPersonalStats" Click="btnPersonalStats_Click"
+                        Padding="10" FontSize="16" Margin="0,0,0,10">My Statistics</Button>
+
+                <Button x:Name="btnHighScores" Click="btnHighScores_Click"
+                        Padding="10" FontSize="16" Margin="0,0,0,30">High Scores</Button>
+
+                <Button x:Name="btnBack" Click="btnBack_Click"
+                        Padding="10" FontSize="14">Back to Hub</Button>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

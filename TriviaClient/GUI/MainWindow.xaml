@@ -1,0 +1,21 @@
+﻿<Window x:Class="TriviaClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TriviaClient"
+        mc:Ignorable="d"
+        Title="Cahoot" Height="450" Width="800">
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="350" Margin="20">
+            <TextBlock TextAlignment="Center" FontWeight="ExtraBold" FontSize="50" Margin="0,0,0,10">Cahoot!</TextBlock>
+            <TextBlock TextAlignment="Center" FontSize="16" Margin="0,0,0,30">The ultimate trivia experience</TextBlock>
+
+            <Button x:Name="btnLogin" Click="btnLogin_Click"
+                    Padding="10" FontSize="16" Margin="0,0,0,10">Login</Button>
+
+            <Button x:Name="btnSignup" Click="btnSignup_Click"
+                    Padding="10" FontSize="16">Sign Up</Button>
+        </StackPanel>
+    </Grid>
+</Window>
