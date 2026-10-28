@@ -2,11 +2,12 @@
 #include <string>
 #include "LoggedUser.h"
 #include <vector>
+#include <mutex>
 
 enum RoomStatus
 {
+	INACTIVE,
 	ACTIVE,
-	INACTIVE
 };
 
 struct RoomData {
@@ -29,7 +30,9 @@ public:
 	void removeUser(LoggedUser& user);
 	std::vector<std::string> getAllUsers();
 	RoomData getRoomMetadata();
+	void setStatus(RoomStatus status);
 private:
 	RoomData m_metadata;
 	std::vector<LoggedUser> m_users;
+	std::mutex m_mutex;
 };

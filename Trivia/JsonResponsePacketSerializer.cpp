@@ -13,26 +13,26 @@ std::vector<uint8_t> JsonResponsePacketSerializer::buildPacket(const std::string
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const LoginResponse& response)
 {
-	json j = { {"status", response.status} };
-	return buildPacket(j.dump(), LOGIN_RESPONSE_CODE);
+	json responseJson = { {"status", response.status} };
+	return buildPacket(responseJson.dump(), LOGIN_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const SignupResponse& response)
 {
-	json j = { {"status", response.status} };
-	return buildPacket(j.dump(), SIGNUP_RESPONSE_CODE);
+	json responseJson = { {"status", response.status} };
+	return buildPacket(responseJson.dump(), SIGNUP_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const ErrorResponse& response)
 {
-	json j = { {"message", response.message} };
-	return buildPacket(j.dump(), ERROR_RESPONSE_CODE);
+	json responseJson = { {"message", response.message} };
+	return buildPacket(responseJson.dump(), ERROR_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const LogoutResponse& response)
 {
-	json j = { {"status", response.status} };
-	return buildPacket(j.dump(), LOGOUT_RESPONSE_CODE);
+	json responseJson = { {"status", response.status} };
+	return buildPacket(responseJson.dump(), LOGOUT_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRoomsResponse& response)
@@ -40,15 +40,15 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRo
 	std::string rooms = "";
 	for (auto& room : response.rooms)
 	{
-		rooms += room.name + ", ";
+		rooms += std::to_string(room.id) + ":" + room.name + ", ";
 	}
 	if (!rooms.empty())
 	{
 		rooms.pop_back();
 		rooms.pop_back();
 	}
-	json j = { {"status", response.status}, {"Rooms", rooms} };
-	return buildPacket(j.dump(), GET_ROOMS_RESPONSE_CODE);
+	json responseJson = { {"status", response.status}, {"Rooms", rooms} };
+	return buildPacket(responseJson.dump(), GET_ROOMS_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetPlayersInRoomResponse& response)
@@ -63,30 +63,88 @@ std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetPl
 		players.pop_back();
 		players.pop_back();
 	}
-	json j = { {"PlayersInRoom", players} };
-	return buildPacket(j.dump(), GET_PLAYERS_IN_ROOM_RESPONSE_CODE);
+	json responseJson = { {"PlayersInRoom", players} };
+	return buildPacket(responseJson.dump(), GET_PLAYERS_IN_ROOM_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const JoinRoomResponse& response)
 {
-	json j = { {"status", response.status} };
-	return buildPacket(j.dump(), JOIN_ROOM_RESPONSE_CODE);
+	json responseJson = { {"status", response.status} };
+	return buildPacket(responseJson.dump(), JOIN_ROOM_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const CreateRoomResponse& response)
 {
-	json j = { {"status", response.status}, {"roomId", response.roomId} };
-	return buildPacket(j.dump(), CREATE_ROOM_RESPONSE_CODE);
+	json responseJson = { {"status", response.status}, {"roomId", response.roomId} };
+	return buildPacket(responseJson.dump(), CREATE_ROOM_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetHighScoreResponse& response)
 {
-	json j = { {"status", response.status}, {"HighScores", response.statistics} };
-	return buildPacket(j.dump(), GET_HIGHSCORE_RESPONSE_CODE);
+	json responseJson = { {"status", response.status}, {"HighScores", response.statistics} };
+	return buildPacket(responseJson.dump(), GET_HIGHSCORE_RESPONSE_CODE);
 }
 
 std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetPersonalStatsResponse& response)
 {
-	json j = { {"status", response.status}, {"UserStatistics", response.statistics} };
-	return buildPacket(j.dump(), GET_PERSONAL_STATS_RESPONSE_CODE);
+	json responseJson = { {"status", response.status}, {"UserStatistics", response.statistics} };
+	return buildPacket(responseJson.dump(), GET_PERSONAL_STATS_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const CloseRoomResponse& response)
+{
+	json responseJson = { {"status", response.status} };
+	return buildPacket(responseJson.dump(), CLOSE_ROOM_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const StartGameResponse& response)
+{
+	json responseJson = { {"status", response.status} };
+	return buildPacket(responseJson.dump(), START_GAME_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetRoomStateResponse& response)
+{
+	json responseJson = { {"status", response.status}, {"hasGameBegan", response.hasGameBegun}, {"players", response.players}, {"questionCount", response.questionCount}, {"answerTimeOut", response.answerTimeout} };
+	return buildPacket(responseJson.dump(), GET_ROOM_STATE_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const LeaveRoomResponse& response)
+{
+	json responseJson = { {"status", response.status} };
+	return buildPacket(responseJson.dump(), LEAVE_ROOM_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetGameResultsResponse& response)
+{
+	json resultsJson = json::array();
+	for (const auto& player : response.results)
+	{
+		resultsJson.push_back({
+			{"username", player.username},
+			{"correctAnswerCount", player.correctAnswerCount},
+			{"wrongAnswerCount", player.wrongAnswerCount},
+			{"averageAnswerTime", player.averageAnswerTime}
+			});
+	}
+	json responseJson = { {"status", response.status}, {"results", resultsJson}};
+	return buildPacket(responseJson.dump(), GET_GAME_RESULTS_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const SubmitAnswerResponse& response)
+{
+	json responseJson = { {"status", response.status}, {"correctAnswerId", response.correctAnswerId} };
+	return buildPacket(responseJson.dump(), SUBMIT_ANSWER_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse& response)
+{
+	json responseJson = { {"status", response.status}, {"question", response.question}, { "answers", response.answers } };
+	return buildPacket(responseJson.dump(), GET_QUESTION_RESPONSE_CODE);
+}
+
+std::vector<uint8_t> JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& response)
+{
+	json responseJson = { {"status", response.status}, };
+	return buildPacket(responseJson.dump(), LEAVE_GAME_RESPONSE_CODE);
 }

@@ -1,0 +1,48 @@
+#include "GameManager.h"
+
+Game& GameManager::createGame(Room& room)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    RoomData meta = room.getRoomMetadata();
+    std::vector<Question> questions = SqliteDataBase::getInstance().getQuestions(meta.numOfQuestions);
+    if (questions.empty())
+    {
+        throw std::exception("Not enough questions in the database");
+    }
+    std::vector<std::string> usernames = room.getAllUsers();
+    std::vector<LoggedUser> players;
+    for (const auto& username : usernames)
+    {
+        players.push_back(LoggedUser(username));
+    }
+
+    m_games.emplace_back(questions, players, meta.id);
+    return m_games.back();
+}
+
+Game& GameManager::getGame(unsigned int gameId)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    for (auto& game : m_games)
+    {
+        if (game.getGameId() == gameId)
+            return game;
+    }
+    throw std::exception("Game not found");
+}
+
+void GameManager::deleteGame(unsigned int gameId)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    for (auto it = m_games.begin(); it != m_games.end(); ++it)
+    {
+        if (it->getGameId() == gameId)
+        {
+            m_games.erase(it);
+            return;
+        }
+    }
+}

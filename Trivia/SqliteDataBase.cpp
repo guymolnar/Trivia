@@ -1,17 +1,18 @@
 #include "SqliteDataBase.h"
+#include <cryptopp/osrng.h>
 
-SqliteDataBase::SqliteDataBase() : m_db(nullptr) 
+SqliteDataBase::SqliteDataBase() : m_db(nullptr)
 {
 }
 
-SqliteDataBase::~SqliteDataBase() 
-{ 
-    close(); 
+SqliteDataBase::~SqliteDataBase()
+{
+    close();
 }
 
 bool SqliteDataBase::open()
 {
-    if (sqlite3_open("trivia.db", &m_db) != SQLITE_OK)
+    if (sqlite3_open(DB_NAME, &m_db) != SQLITE_OK)
     {
         return false;
     }
@@ -28,15 +29,18 @@ bool SqliteDataBase::open()
 
 bool SqliteDataBase::close()
 {
-    if (m_db) 
+    if (m_db)
     {
-        sqlite3_close(m_db);
+        if (sqlite3_close(m_db) != SQLITE_OK)
+        {
+            return false;
+        }
         m_db = nullptr;
     }
     return true;
 }
 
-int SqliteDataBase::doesUserExist(std::string username)
+int SqliteDataBase::doesUserExist(const std::string& username)
 {
     std::string query = "SELECT COUNT(*) FROM users WHERE username = '" + username + "';";
     int count = 0;
@@ -47,7 +51,7 @@ int SqliteDataBase::doesUserExist(std::string username)
     return count;
 }
 
-int SqliteDataBase::doesPasswordMatch(std::string username, std::string password)
+int SqliteDataBase::doesPasswordMatch(const std::string& username, const std::string& password)
 {
     std::string query = "SELECT COUNT(*) FROM users WHERE username = '" + username + "' AND password = '" + password + "';";
     int count = 0;
@@ -58,7 +62,7 @@ int SqliteDataBase::doesPasswordMatch(std::string username, std::string password
     return count;
 }
 
-int SqliteDataBase::addNewUser(std::string username, std::string password, std::string email, std::string address, std::string phone, std::string birthday)
+int SqliteDataBase::addNewUser(const std::string& username, const std::string& password, const std::string& email, const std::string& address, const std::string& phone, const std::string& birthday)
 {
     std::string query = "INSERT INTO users (username, password, email, address, phone, birthday) VALUES ('" + username + "', '" + password + "', '" + email + "', '" + address + "', '" + phone + "', '" + birthday + "');";
     return sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, nullptr) == SQLITE_OK;
@@ -81,7 +85,7 @@ std::vector<Question> SqliteDataBase::getQuestions(int numOfQuestions)
     return questions;
 }
 
-float SqliteDataBase::getPlayerAverageAnswerTime(std::string username)
+float SqliteDataBase::getPlayerAverageAnswerTime(const std::string& username)
 {
     std::string query = "SELECT totalAnswerTime, totalAnswers FROM statistics WHERE username = '" + username + "';";
     std::pair<float, int> data = { 0, 0 };
@@ -94,7 +98,7 @@ float SqliteDataBase::getPlayerAverageAnswerTime(std::string username)
     return data.second > 0 ? data.first / data.second : 0;
 }
 
-int SqliteDataBase::getNumOfCorrectAnswers(std::string username)
+int SqliteDataBase::getNumOfCorrectAnswers(const std::string& username)
 {
     std::string query = "SELECT totalCorrectAnswers FROM statistics WHERE username = '" + username + "';";
     int count = 0;
@@ -105,7 +109,7 @@ int SqliteDataBase::getNumOfCorrectAnswers(std::string username)
     return count;
 }
 
-int SqliteDataBase::getNumOfTotalAnswers(std::string username)
+int SqliteDataBase::getNumOfTotalAnswers(const std::string& username)
 {
     std::string query = "SELECT totalAnswers FROM statistics WHERE username = '" + username + "';";
     int count = 0;
@@ -116,7 +120,7 @@ int SqliteDataBase::getNumOfTotalAnswers(std::string username)
     return count;
 }
 
-int SqliteDataBase::getNumOfPlayerGames(std::string username)
+int SqliteDataBase::getNumOfPlayerGames(const std::string& username)
 {
     std::string query = "SELECT numOfGames FROM statistics WHERE username = '" + username + "';";
     int count = 0;
@@ -127,7 +131,7 @@ int SqliteDataBase::getNumOfPlayerGames(std::string username)
     return count;
 }
 
-int SqliteDataBase::getPlayerScore(std::string username)
+int SqliteDataBase::getPlayerScore(const std::string& username)
 {
     int correct = getNumOfCorrectAnswers(username);
     int total = getNumOfTotalAnswers(username);
@@ -145,4 +149,20 @@ std::vector<std::string> SqliteDataBase::getHighScores()
         return 0;
         }, &scores, nullptr);
     return scores;
+}
+
+int SqliteDataBase::submitGameStatistics(const std::string& username, unsigned int correctAnswers, unsigned int wrongAnswers, unsigned int averageAnswerTime)
+{
+    unsigned int totalAnswers = correctAnswers + wrongAnswers;
+    std::string query =
+        "INSERT INTO statistics (username, totalCorrectAnswers, totalWrongAnswers, totalAnswerTime, totalAnswers, numOfGames) "
+        "VALUES ('" + username + "', " + std::to_string(correctAnswers) + ", " + std::to_string(wrongAnswers) + ", " +
+        std::to_string(averageAnswerTime) + ", " + std::to_string(totalAnswers) + ", 1) "
+        "ON CONFLICT(username) DO UPDATE SET "
+        "totalCorrectAnswers = totalCorrectAnswers + " + std::to_string(correctAnswers) + ", "
+        "totalWrongAnswers = totalWrongAnswers + " + std::to_string(wrongAnswers) + ", "
+        "totalAnswerTime = totalAnswerTime + " + std::to_string(averageAnswerTime) + ", "
+        "totalAnswers = totalAnswers + " + std::to_string(totalAnswers) + ", "
+        "numOfGames = numOfGames + 1;";
+    return sqlite3_exec(m_db, query.c_str(), nullptr, nullptr, nullptr) == SQLITE_OK;
 }

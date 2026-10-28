@@ -5,7 +5,7 @@ MenuRequestHandler::MenuRequestHandler(RequestHandlerFactory& handlerFactory, Lo
 {
 }
 
-bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo)
+bool MenuRequestHandler::isRequestRelevant(const RequestInfo& requestInfo) const
 {
     return requestInfo.id == LOGOUT_REQUEST_CODE ||
         requestInfo.id == GET_ROOMS_REQUEST_CODE ||
@@ -156,7 +156,7 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
         }
         room->addUser(m_user);
         JoinRoomResponse response{ 1 };
-        return { JsonResponsePacketSerializer::serializeResponse(response), this };
+        return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createRoomMemberRequestHandler(m_user, req.roomId) };
     }
     catch (const std::exception& e)
     {
@@ -170,9 +170,9 @@ RequestResult MenuRequestHandler::joinRoom(const RequestInfo& requestInfo)
         try
         {
             CreateRoomRequest req = JsonRequestPacketDeserializer::deserializeCreateRoomRequest(requestInfo.buffer);
-            unsigned int newRoomId = m_handlerFactory.getRoomManager().createRoom(m_user, { 0, req.roomName, req.maxUsers, req.questionsCount, req.answersTimeout, RoomStatus::ACTIVE });       
+            unsigned int newRoomId = m_handlerFactory.getRoomManager().createRoom(m_user, { 0, req.roomName, req.maxUsers, req.questionsCount, req.answersTimeout, RoomStatus::INACTIVE });       
             CreateRoomResponse response{ 1, newRoomId};
-            return { JsonResponsePacketSerializer::serializeResponse(response), this };
+            return { JsonResponsePacketSerializer::serializeResponse(response), m_handlerFactory.createRoomAdminRequestHandler(m_user, newRoomId) };
         }
         catch (const std::exception& e)
         {

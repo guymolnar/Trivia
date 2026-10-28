@@ -1,25 +1,33 @@
-﻿using System.Windows;
+using System.Threading;
+using System.Windows;
 using TriviaClient.Models;
 using TriviaClient.Networking;
-using static TriviaClient.Models.RequestCodes;
+using static TriviaClient.Models.Codes;
 
 namespace TriviaClient
 {
     public partial class RoomLobbyWindow : Window
     {
         private string _username;
+        private bool _isAdmin;
+        private int _roomId;
+        private int _questionCount;
+        private int _answerTimeout;
+        private Thread? _refreshingThread;
+        private bool _refreshing = false;
+        private readonly object _socketLock = new object();
+        private bool _closedByButton = false;
 
         public RoomLobbyWindow(string username, string roomName, int roomId)
         {
             InitializeComponent();
             _username = username;
+            _roomId = roomId;
             txtRoomName.Text = roomName;
+
             try
             {
-                Communicator.Instance.SendRequest(GET_PLAYERS_REQUEST_CODE, new GetPlayersInRoomRequest
-                {
-                    roomId = roomId,
-                });
+                Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest { roomId = roomId });
                 var (code, json) = Communicator.Instance.ReceiveResponse();
 
                 if (code == 100)
@@ -28,31 +36,209 @@ namespace TriviaClient
                     return;
                 }
 
-                var response = JsonDeserializer.Deserialize<GetPlayersInRoomResponse>(json);
-                if (string.IsNullOrEmpty(response.PlayersInRoom))
+                var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
+                if (response.players == null || response.players.Count == 0)
                 {
                     lstPlayers.Items.Add("No players yet.");
                     return;
                 }
-
-                var players = response.PlayersInRoom.Split(", ");
-                foreach (var player in players)
-                {
+                _questionCount = response.questionCount;
+                _answerTimeout = response.answerTimeOut;
+                foreach (var player in response.players)
                     lstPlayers.Items.Add(player);
-                }
-                txtAdmin.Text = $"Admin: {players[0]}";
+
+                txtAdmin.Text = $"Admin: {response.players[0]}";
+                _isAdmin = response.players[0] == _username;
+                btnCloseRoom.Visibility = _isAdmin ? Visibility.Visible : Visibility.Collapsed;
+                btnStartGame.Visibility = _isAdmin ? Visibility.Visible : Visibility.Collapsed;
+                btnLeave.Visibility = _isAdmin ? Visibility.Collapsed : Visibility.Visible;
             }
             catch (Exception ex)
             {
                 lstPlayers.Items.Add(ex.Message);
             }
+
+            StartRefreshing();
+        }
+
+        private void StartRefreshing()
+        {
+            _refreshing = true;
+            _refreshingThread = new Thread(() =>
+            {
+                while (_refreshing)
+                {
+                    Thread.Sleep(1000);
+                    if (!_refreshing) break;
+                    lock (_socketLock)
+                    {
+                        try
+                        {
+                            Communicator.Instance.SendRequest(GET_ROOM_STATE_REQUEST_CODE, new GetRoomStateRequest { roomId = _roomId });
+                            var (code, json) = Communicator.Instance.ReceiveResponse();
+
+                            var response = JsonDeserializer.Deserialize<GetRoomStateResponse>(json);
+
+                            if (code == 100 || response.status == 0)
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    MessageBox.Show("The room was closed.", "Room Closed");
+                                    HubWindow hub = new HubWindow(_username);
+                                    hub.Show();
+                                    _closedByButton = true;
+                                    this.Close();
+                                });
+                                return;
+                            }
+
+                            if (response.hasGameBegan)
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    GameWindow game = new GameWindow(_username, _questionCount, _answerTimeout);
+                                    game.Show();
+                                    _closedByButton = true;
+                                    this.Close();
+                                });
+                                return;
+                            }
+
+                            Dispatcher.Invoke(() =>
+                            {
+                                lstPlayers.Items.Clear();
+                                if (response.players != null)
+                                {
+                                    foreach (var player in response.players)
+                                        lstPlayers.Items.Add(player);
+                                }
+                            });
+                        }
+                        catch { }
+                    }
+                }
+            });
+            _refreshingThread.IsBackground = true;
+            _refreshingThread.Start();
+        }
+
+        private void StopRefreshing()
+        {
+            _refreshing = false;
         }
 
         private void btnLeave_Click(object sender, RoutedEventArgs e)
         {
+            StopRefreshing();
+            lock (_socketLock)
+            {
+                try
+                {
+                    Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    var response = JsonDeserializer.Deserialize<LeaveRoomResponse>(json);
+
+                    if (code == 100 || response.status == 0)
+                    {
+                        MessageBox.Show("Could not leave room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        StartRefreshing();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    StartRefreshing();
+                    return;
+                }
+            }
+
             HubWindow hub = new HubWindow(_username);
             hub.Show();
+            _closedByButton = true;
             this.Close();
+        }
+
+        private void btnCloseRoom_Click(object sender, RoutedEventArgs e)
+        {
+            StopRefreshing();
+            lock (_socketLock)
+            {
+                try
+                {
+                    Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    var response = JsonDeserializer.Deserialize<CloseRoomResponse>(json);
+
+                    if (code == 100 || response.status == 0)
+                    {
+                        MessageBox.Show("Could not close room.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        StartRefreshing();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    StartRefreshing();
+                    return;
+                }
+            }
+
+            HubWindow hub = new HubWindow(_username);
+            hub.Show();
+            _closedByButton = true;
+            this.Close();
+        }
+
+        private void btnStartGame_Click(object sender, RoutedEventArgs e)
+        {
+            StopRefreshing();
+            lock (_socketLock)
+            {
+                try
+                {
+                    Communicator.Instance.SendRequest(START_GAME_REQUEST_CODE, new StartGameRequest { roomId = _roomId });
+                    var (code, json) = Communicator.Instance.ReceiveResponse();
+                    var response = JsonDeserializer.Deserialize<StartGameResponse>(json);
+
+                    if (code == 100 || response.status == 0)
+                    {
+                        MessageBox.Show("Could not start game.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        StartRefreshing();
+                        return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    StartRefreshing();
+                    return;
+                }
+            }
+
+            GameWindow game = new GameWindow(_username, _questionCount, _answerTimeout);
+            game.Show();
+            _closedByButton = true;
+            this.Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            StopRefreshing();
+            if (_closedByButton) return;
+            lock (_socketLock)
+            {
+                try
+                {
+                    if (_isAdmin)
+                        Communicator.Instance.SendRequest(CLOSE_ROOM_REQUEST_CODE, new CloseRoomRequest { roomId = _roomId });
+                    else
+                        Communicator.Instance.SendRequest(LEAVE_ROOM_REQUEST_CODE, new LeaveRoomRequest { roomId = _roomId });
+                    Communicator.Instance.ReceiveResponse();
+                }
+                catch { }
+            }
         }
     }
 }

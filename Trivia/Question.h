@@ -5,11 +5,11 @@
 
 class Question {
 public:
-	Question(std::string question, std::vector<std::string> possibleAnswers, int correctAnswerId);
+	Question(const std::string& question, const  std::vector<std::string>& possibleAnswers, const int correctAnswerId);
 	Question() = default;
-	std::string getQuestion();
-	std::vector<std::string> getPossibleAnswers();
-	int getCorrectAnswerId();
+	std::string getQuestion() const;
+	std::vector<std::string> getPossibleAnswers() const ;
+	int getCorrectAnswerId() const;
 private:
 	std::string m_question;
 	std::vector<std::string> m_possibleAnswers;

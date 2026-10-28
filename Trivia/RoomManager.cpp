@@ -3,21 +3,24 @@
 
 unsigned int RoomManager::createRoom(LoggedUser roomAdmin, RoomData roomData)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
     roomData.id = m_nextRoomId++;
-    Room newRoom(roomData);
+    Room& newRoom = m_rooms.try_emplace(roomData.id, roomData).first->second;
     newRoom.addUser(roomAdmin);
-    m_rooms[roomData.id] = newRoom;
     return roomData.id;
 }
 
-void RoomManager::deleteRoom(roomID ID)
+void RoomManager::deleteRoom(unsigned int id)
 {
-    m_rooms.erase(ID);
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_rooms.erase(id);
 }
 
-Room* RoomManager::getRoom(roomID ID)
+Room* RoomManager::getRoom(unsigned int id)
 {
-    auto it = m_rooms.find(ID);
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    auto it = m_rooms.find(id);
     if (it == m_rooms.end())
     {
         return nullptr;
@@ -25,22 +28,29 @@ Room* RoomManager::getRoom(roomID ID)
     return &it->second;
 }
 
-RoomStatus RoomManager::getRoomState(roomID ID)
+RoomStatus RoomManager::getRoomState(unsigned int id)
 {
-    Room* r = getRoom(ID);
-    if (!r)
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    auto it = m_rooms.find(id);
+    if (it == m_rooms.end())
     {
         throw std::exception("Room does not exist");
     }
-    return r->getRoomMetadata().status;
+    return it->second.getRoomMetadata().status;
 }
 
 std::vector<RoomData> RoomManager::getRooms()
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     std::vector<RoomData> roomsVector;
     for (auto& [id, room] : m_rooms)
     {
-        roomsVector.push_back(room.getRoomMetadata());
+        if(room.getRoomMetadata().status == INACTIVE)
+        {
+            roomsVector.push_back(room.getRoomMetadata());
+        }
     }
     return roomsVector;
 }

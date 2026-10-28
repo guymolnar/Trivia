@@ -1,11 +1,19 @@
 #include "Communicator.h"
 #include "RequestHandlerFactory.h"
+#include "AESCryptoAlgorithm.h"
+#include "SqliteDataBase.h"
 
 static const unsigned short PORT = 8826;
 static const unsigned int IFACE = 0;
 
+static const std::vector<uint8_t> AES_KEY = {
+	0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
+	0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f
+};
+
 Communicator::Communicator(RequestHandlerFactory& handlerFactory) : m_handlerFactory(handlerFactory)
 {
+	m_crypto = new AESCryptoAlgorithm(AES_KEY);
 	this->m_serverSocket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (this->m_serverSocket == INVALID_SOCKET)
 	{
@@ -24,6 +32,7 @@ Communicator::~Communicator()
 		}
 		m_clients.clear();
 		::closesocket(this->m_serverSocket);
+		delete m_crypto;
 	}
 	catch (...) {}
 }
@@ -70,26 +79,31 @@ void Communicator::handleNewClient(SOCKET clientSocket)
 		RequestInfo requestInfo;
 		while (readMessage(clientSocket, requestInfo))
 		{
-			IRequestHandler* handler = m_clients[clientSocket];
+			IRequestHandler* handler;
+			{
+				std::lock_guard<std::mutex> lock(m_clientsMutex);
+				handler = m_clients[clientSocket];
+			}
 
 			if (!handler->isRequestRelevant(requestInfo))
 			{
+				ErrorResponse err{ "Request not relevant" };
+				auto response = JsonResponsePacketSerializer::serializeResponse(err);
+				sendResponse(clientSocket, response);
 				continue;
 			}
 
 			RequestResult result = handler->handleRequest(requestInfo);
-
-			send(clientSocket, reinterpret_cast<const char*>(result.buffer.data()), result.buffer.size(), 0);
+			sendResponse(clientSocket, result.buffer);
 
 			{
 				std::lock_guard<std::mutex> lock(m_clientsMutex);
 				IRequestHandler* old = m_clients[clientSocket];
 				m_clients[clientSocket] = result.newHandler;
 				if (old != result.newHandler)
-				{
 					delete old;
-				}
 			}
+
 			if (!result.newHandler) break;
 		}
 
@@ -139,21 +153,21 @@ bool Communicator::recvAll(SOCKET s, char* buffer, int length)
 bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 {
 	uint8_t code;
-	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), 1))
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(&code), CODE_SIZE))
 	{
 		return false;
 	}
-	uint8_t lenBytes[4];
-	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), 4))
+	uint8_t lenBytes[LENGTH_SIZE];
+	if (!recvAll(clientSocket, reinterpret_cast<char*>(lenBytes), LENGTH_SIZE))
 	{
 		return false;
 	}
 
 	uint32_t jsonLen;
-	memcpy(&jsonLen, lenBytes, 4);
+	memcpy(&jsonLen, lenBytes, LENGTH_SIZE);
 	jsonLen = ntohl(jsonLen);
 
-	if (jsonLen > 4096)
+	if (jsonLen > MAX_MESSAGE_SIZE)
 	{
 		return false;
 	}
@@ -166,6 +180,22 @@ bool Communicator::readMessage(SOCKET clientSocket, RequestInfo& requestInfo)
 
 	requestInfo.id = code;
 	requestInfo.receivalTime = time(nullptr);
-	requestInfo.buffer = payload;
+	requestInfo.buffer = m_crypto->decrypt(payload);
 	return true;
+}
+
+void Communicator::sendResponse(SOCKET clientSocket, const std::vector<uint8_t>& serialized)
+{
+	uint8_t code = serialized[0];
+	std::vector<uint8_t> body(serialized.begin() + 5, serialized.end());   //skipping [code][len]
+	std::vector<uint8_t> cipher = m_crypto->encrypt(body);
+
+	std::vector<uint8_t> packet;
+	packet.push_back(code);
+	uint32_t len = htonl(static_cast<uint32_t>(cipher.size()));
+	const uint8_t* lenBytes = reinterpret_cast<const uint8_t*>(&len);
+	packet.insert(packet.end(), lenBytes, lenBytes + 4);
+	packet.insert(packet.end(), cipher.begin(), cipher.end());
+
+	send(clientSocket, reinterpret_cast<const char*>(packet.data()), static_cast<int>(packet.size()), 0);
 }
